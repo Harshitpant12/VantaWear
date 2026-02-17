@@ -1,0 +1,6 @@
+docs.md
+docs2.md
+.env
+.env.*
+*.env
+node_modules
