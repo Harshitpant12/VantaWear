@@ -34,3 +34,52 @@ export const signup = async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" })
     }
 }
+
+export const login = async (req, res) => {
+    const { email, password } = req.body
+    try {
+        if (!email || !password) return res.status(400).json({ message: "All fields are required" })
+
+        const emailLower = email.toLowerCase().trim()
+        const user = await User.findOne({ email: emailLower })
+        if (!user) return res.status(401).json({ message: "Invalid credentials" })
+
+        const isPasswordCorrect = await bcrypt.compare(password, user.password)
+        if (!isPasswordCorrect) return res.status(401).json({ message: "Invalid credentials" })
+
+        generateToken(user._id, res)
+
+        res.status(200).json({
+            _id: user._id,
+            name: user.name,
+            email: user.email
+        })
+    } catch (error) {
+        console.log("Error in login controller : ", error.message)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+export const logout = (_, res) => {
+    try {
+        res.cookie("jwt", "", {
+            maxAge: 0,
+            sameSite: "strict",
+            secure: process.env.NODE_ENV === 'production',
+            httpOnly: true,
+            path: "/"
+        })
+        res.status(200).json({ message: "Logged out successfully!" })
+    } catch (error) {
+        console.log("Error in logout controller : ", error.message)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+export const me = async (req, res) => {
+    if (req.user) {
+        res.status(200).json(req.user)
+    } else {
+        res.status(401).json({ message: "Unauthorized" })
+    }
+}
