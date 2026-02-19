@@ -57,10 +57,20 @@ export const getProduct = async (req, res) => {
 
 export const getFeaturedProducts = async (_, res) => {
     try {
-        const products = await Product.find({ isFeatured: true}).limit(10)
+        const products = await Product.find({ isFeatured: true }).limit(10)
         res.status(200).json(products)
     } catch (error) {
         console.log("Error in getFeaturedProducts controller : ", error.message)
-        res.status(500).json({message: "Internal Server Error"})
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+export const getAllCategories = async (_, res) => {
+    try {
+        const categories = await Product.distinct("category") // get distinct categories from products collection
+        res.status(200).json(categories) // can be sorted as well like categories.sort() if needed later
+    } catch (error) {
+        console.log("Error in getAllCategories controller : ", error.message)
+        res.status(500).json({ message: "Internal Server Error" })
     }
 }
