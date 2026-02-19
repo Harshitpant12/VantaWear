@@ -54,3 +54,13 @@ export const getProduct = async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" })
     }
 }
+
+export const getFeaturedProducts = async (_, res) => {
+    try {
+        const products = await Product.find({ isFeatured: true}).limit(10)
+        res.status(200).json(products)
+    } catch (error) {
+        console.log("Error in getFeaturedProducts controller : ", error.message)
+        res.status(500).json({message: "Internal Server Error"})
+    }
+}

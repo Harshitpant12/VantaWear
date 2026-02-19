@@ -24,6 +24,10 @@ const productSchema = new mongoose.Schema(
             required: true,
             min: 0
         },
+        isFeatured: {
+            type: Boolean,
+            default: false
+        },
         images: {
             type: [String], // array of images url
             default: [],
