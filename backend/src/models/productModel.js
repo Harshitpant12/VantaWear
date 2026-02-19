@@ -39,7 +39,11 @@ const productSchema = new mongoose.Schema(
                 comment: String,
                 createdAt: { type: Date, default: Date.now() } // if adding update comment option then also add the updatedAt
             }
-        ]
+        ],
+        deletedAt: {
+            type: Date,
+            default: null
+        }
     },
     {
         timestamps: true

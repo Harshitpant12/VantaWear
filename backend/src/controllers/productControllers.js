@@ -6,7 +6,7 @@ export const getAllProducts = async (req, res) => {
         const limit = Number(req.query.limit) || 10
         const skip = (page - 1) * limit
 
-        const query = {}
+        const query = { deletedAt: null }
 
         // filter by category
         if (req.query.category) {
@@ -45,7 +45,7 @@ export const getAllProducts = async (req, res) => {
 
 export const getProduct = async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id).populate("reviews.user", "name") // populate the user field in reviews with the name of the user
+        const product = await Product.findById(req.params.id).populate("reviews.user", "name").where({ deletedAt: null }) // populate the user field in reviews with the name of the user
         if (!product) return res.status(404).json({ message: "No Such Product Found!" })
 
         res.status(200).json(product)
@@ -57,7 +57,7 @@ export const getProduct = async (req, res) => {
 
 export const getFeaturedProducts = async (_, res) => {
     try {
-        const products = await Product.find({ isFeatured: true }).limit(10)
+        const products = await Product.find({ isFeatured: true, deletedAt: null }).limit(10)
         res.status(200).json(products)
     } catch (error) {
         console.log("Error in getFeaturedProducts controller : ", error.message)
@@ -67,7 +67,7 @@ export const getFeaturedProducts = async (_, res) => {
 
 export const getAllCategories = async (_, res) => {
     try {
-        const categories = await Product.distinct("category") // get distinct categories from products collection
+        const categories = await Product.distinct("category", { deletedAt: null }) // get distinct categories from products collection
         res.status(200).json(categories) // can be sorted as well like categories.sort() if needed later
     } catch (error) {
         console.log("Error in getAllCategories controller : ", error.message)
@@ -104,10 +104,9 @@ export const updateProduct = async (req, res) => {
     try {
         if (name == null && description == null && price == null && category == null && stock_quantity == null && isFeatured == null && images == null) return res.status(400).json({ message: "Nothing to update!" })
 
-
         const updateFields = {}
         if (name) updateFields.name = name.trim() // if name is provided, trim it, otherwise keep it unchanged
-        if (description) updateFields.description = description.trim()
+        if (description != null) updateFields.description = description.trim()
         if (price != null) updateFields.price = price
         if (category) updateFields.category = category
         if (stock_quantity != null) updateFields.stock_quantity = stock_quantity
@@ -121,6 +120,24 @@ export const updateProduct = async (req, res) => {
         res.status(200).json(product)
     } catch (error) {
         console.log("Error in updateProduct controller : ", error.message)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+export const deleteProduct = async (req, res) => {
+    const productId = req.params.id
+    try {
+        const product = await Product.findById(productId)
+        // const product = await Product.findByIdAndUpdate(productId, { deletedAt: Date.now() }, { new: true })
+        if (!product) return res.status(404).json({ message: "Product not found!" })
+        if(product.deletedAt) return res.status(400).json({message: "Product already deleted!"})
+
+        product.deletedAt = Date.now()
+        await product.save()
+
+        res.status(200).json({ message: "Product deleted successfully!" })
+    } catch (error) {
+        console.log("Error in deleteProduct controller : ", error.message)
         res.status(500).json({ message: "Internal Server Error" })
     }
 }

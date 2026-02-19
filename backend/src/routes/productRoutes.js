@@ -14,5 +14,6 @@ router.get('/categories', getAllCategories)
 // admins only routes
 router.post('/', protectRoute, checkUserRole, createProduct)
 router.put('/:id', protectRoute, checkUserRole, updateProduct)
+router.delete('/:id', protectRoute, checkUserRole, deleteProduct)
 
 export default router
