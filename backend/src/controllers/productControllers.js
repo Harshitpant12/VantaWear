@@ -97,3 +97,30 @@ export const createProduct = async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" })
     }
 }
+
+export const updateProduct = async (req, res) => {
+    const productId = req.params.id
+    const { name, description, price, category, stock_quantity, isFeatured, images } = req.body
+    try {
+        if (name == null && description == null && price == null && category == null && stock_quantity == null && isFeatured == null && images == null) return res.status(400).json({ message: "Nothing to update!" })
+
+
+        const updateFields = {}
+        if (name) updateFields.name = name.trim() // if name is provided, trim it, otherwise keep it unchanged
+        if (description) updateFields.description = description.trim()
+        if (price != null) updateFields.price = price
+        if (category) updateFields.category = category
+        if (stock_quantity != null) updateFields.stock_quantity = stock_quantity
+        if (isFeatured != null) updateFields.isFeatured = isFeatured
+        if (images) updateFields.images = images
+        // we can use spread syntax as well ...(name && {name: name.trim()})
+
+        const product = await Product.findByIdAndUpdate(productId, updateFields, { new: true })
+        if (!product) return res.status(404).json({ message: "Product not found!" })
+
+        res.status(200).json(product)
+    } catch (error) {
+        console.log("Error in updateProduct controller : ", error.message)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
