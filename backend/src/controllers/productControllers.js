@@ -74,3 +74,26 @@ export const getAllCategories = async (_, res) => {
         res.status(500).json({ message: "Internal Server Error" })
     }
 }
+
+export const createProduct = async (req, res) => {
+    const { name, description, price, category, stock_quantity, isFeatured, images } = req.body
+    try {
+        if (!name || price == null || !category || stock_quantity == null) return res.status(400).json({ message: "Please provide all necessary details" })
+        if (price < 0) return res.status(400).json({ message: "Price must be greater than or equal to 0" })
+        if (stock_quantity < 0) return res.status(400).json({ message: "Stock quantity must be greater than or equal to 0" })
+
+        const product = await Product.create({
+            name: name.trim(),
+            description: description ? description.trim() : "",
+            price,
+            category,
+            stock_quantity,
+            isFeatured, // relying on schema default value
+            images
+        })
+        res.status(201).json(product)
+    } catch (error) {
+        console.log("Error in createProduct controller : ", error.message)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
