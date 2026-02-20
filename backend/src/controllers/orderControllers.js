@@ -61,9 +61,50 @@ export const getOrderById = async (req, res) => {
         const order = await Order.findOne({ user_id: userId, _id: orderId })
         if (!order) return res.status(404).json({ message: "No order found!" })
 
-        res.status(200).json(order)
+        res.status(200).json({ // trying to keep everything consistent :)
+            success: true,
+            order
+        })
     } catch (error) {
         console.log("Error in getOrderById controller : ", error.message)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+export const getAllOrders = async (req, res) => {
+    try {
+        const orders = await Order.find({}).sort({ createdAt: -1 }) // later we can have pagination (for large amount of orders) here as well but not for now
+        res.status(200).json({
+            success: true,
+            count: orders.length,
+            orders
+        })
+    } catch (error) {
+        console.log("Error in getAllOrders controller : ", error.message)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+export const updateOrderStatus = async (req, res) => {
+    const orderId = req.params.id
+    const { order_status } = req.body
+    try {
+        const order = await Order.findOne({ _id: orderId }) // we can use findById also, its about choice :)
+        if (!order) return res.status(404).json({ message: "No order found!" })
+        if(order.order_status === order_status) return res.status(400).json({message: "Order already has this status"})
+
+        const statusOptions = Order.schema.path('order_status').enumValues
+        if (!statusOptions.includes(order_status)) return res.status(400).json({ message: "Please choose a valid option!" })
+
+        order.order_status = order_status
+        await order.save()
+
+        res.status(200).json({
+            success: true,
+            order
+        })
+    } catch (error) {
+        console.log("Error in updateOrderStatus controller : ", error.message)
         res.status(500).json({ message: "Internal Server Error" })
     }
 }
