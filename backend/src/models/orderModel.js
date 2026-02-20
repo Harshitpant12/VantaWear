@@ -64,6 +64,11 @@ const orderSchema = new mongoose.Schema(
             type: Number,
             required: true,
             min: 0
+        },
+        payment_intent_id: {
+            type: String,
+            required: true,
+            unique: true
         }
     },
     {
@@ -71,7 +76,7 @@ const orderSchema = new mongoose.Schema(
     }
 )
 
-orderSchema.index({ user_id : 1}) // index to optimize queries when fetching user order history
+orderSchema.index({ user_id: 1 }) // index to optimize queries when fetching user order history
 
 const Order = mongoose.model("Order", orderSchema)
 
