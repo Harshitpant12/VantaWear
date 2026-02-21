@@ -25,6 +25,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/products', productRoutes)
 app.use('/api/orders', orderRoutes)
 app.use('/api/users', usersRoutes)
+app.use('/api/payment', paymentRoutes)
 
 app.listen(PORT, () => {
     console.log(`Server is listening at port ${PORT}`)
