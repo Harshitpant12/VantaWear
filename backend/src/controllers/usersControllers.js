@@ -8,13 +8,13 @@ export const updateUserProfile = async (req, res) => {
 
         const updateData = { name }
         const addressFields = { fullName, phone, street, city, state, postalCode, country }
-        
+
         Object.entries(addressFields).forEach(([key, val]) => {
-            if(val !== undefined && val !== ""){
+            if (val !== undefined && val !== "") {
                 updateData[`address.${key}`] = val
             }
         })
-        const user = await User.findByIdAndUpdate(userId, {$set: updateData}, { new: true })
+        const user = await User.findByIdAndUpdate(userId, { $set: updateData }, { new: true })
         if (!user) return res.status(404).json({ message: "User not found!" })
 
         res.status(200).json(user)
@@ -24,9 +24,9 @@ export const updateUserProfile = async (req, res) => {
     }
 }
 
-export const getAllUsers = async(req, res) => {
+export const getAllUsers = async (req, res) => {
     try {
-        const users = await User.find({}).select("-password").sort({createdAt : -1}) // shows latest users at first
+        const users = await User.find({}).select("-password").sort({ createdAt: -1 }) // shows latest users at first
         res.status(200).json(users) // later we might add pagination (no filters required)
     } catch (error) {
         console.log("Error in getAllUsers controller : ", error.message);
@@ -34,6 +34,23 @@ export const getAllUsers = async(req, res) => {
     }
 }
 
-export const getUserGrowth = async (req, res) => {
-    // will implement it soon... come check tommorow :)
+export const getUserStats = async (req, res) => {
+    try {
+        // first we will have to create a date for today
+        const startOfToday = new Date() // later properly check according to different time zone
+        startOfToday.setHours(0, 0, 0, 0)
+
+        const [totalUsers, newUsersToday] = await Promise.all([
+            User.estimatedDocumentCount(), // total count -> will be assigned to totalUsers
+            User.countDocuments({ createdAt: { $gte: startOfToday } }) // today's users count -> will be assigned to newUsersToday
+        ])
+
+        res.status(200).json({
+            totalUsers,
+            newUsersToday
+        })
+    } catch (error) {
+        console.log("Error in getUserStats controller : ", error.message);
+        res.status(500).json({ message: "Internal Server Error" })
+    }
 }
