@@ -1,4 +1,6 @@
 import React from "react";
+import { Feather, Package, Shirt } from "lucide-react";
+
 import Model from "../../assets/model.png";
 import femaleModel from "../../assets/femaleModel.png";
 import Imagecard from "../../components/Imagecard";
@@ -41,8 +43,39 @@ function Home() {
         </div>
       </div>
       {/* section 3 -> Why VantaWear */}
-      <div className="m-4 flex flex-col gap-5 mb-16">
-        <h1 className="text-center text-3xl font-bold">Why VantaWear</h1>
+      <div className="py-20 px-6 bg-black text-white">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-center text-3xl md:text-4xl font-bold mb-16 tracking-wide">
+            Why VantaWear
+          </h1>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+            {/* Col 1 */}
+            <div className="flex flex-col items-center gap-6 group transition duration-300">
+              <Feather size={40} strokeWidth={1.5} className="text-white group-hover:scale-110 transition duration-300" />
+              <h3 className="text-xl font-semibold">Premium Heavyweight Cotton</h3>
+              <p className="text-gray-400 max-w-xs">
+                Crafted from 400 GSM heavyweight cotton for structure, durability, and a premium feel.
+              </p>
+            </div>
+            {/* Col 2 */}
+            <div className="flex flex-col items-center gap-6 group transition duration-300">
+              <Shirt size={40} strokeWidth={1.5} className="text-white group-hover:scale-110 transition duration-300" />
+              <h3 className="text-xl font-semibold">Designed for Everyday Wear</h3>
+              <p className="text-gray-400 max-w-xs">
+                Built for movement. Tailored for comfort. Designed to elevate everyday essentials.
+              </p>
+            </div>
+            {/* Col 3 */}
+            <div className="flex flex-col items-center gap-6 group transition duration-300">
+              <Package size={40} strokeWidth={1.5} className="text-white group-hover:scale-110 transition duration-300" />
+              <h3 className="text-xl font-semibold">Limited Edition Drops</h3>
+              <p className="text-gray-400 max-w-xs">
+                Small batch releases. No restocks. Once it's gone, it's gone.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );
