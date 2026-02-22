@@ -1,8 +1,13 @@
 import React from "react";
-import { Feather, MoveRightIcon, Package, Shirt } from "lucide-react";
+import { Feather, Package, Shirt } from "lucide-react";
 
 import Model from "../../assets/model.png";
 import femaleModel from "../../assets/femaleModel.png";
+import tees from "../../assets/TEES.png";
+import monochrome from "../../assets/monochrome.png";
+import sweatshirt from "../../assets/sweatshirt.png";
+import hoodie from "../../assets/hoodie.png";
+import oversized from "../../assets/oversized.png";
 import Imagecard from "../../components/Imagecard";
 
 function Home() {
@@ -47,7 +52,7 @@ function Home() {
               price="Rs. 5900"
             />
             <Imagecard
-              image={femaleModel}
+              image={monochrome}
               name="MonoChrome sets"
               price="Rs. 8000"
             />
@@ -108,7 +113,7 @@ function Home() {
         </div>
       </div>
       {/* section 4 -> Best Sellers */}
-      <div className="py-20 px-6 bg-white text-black">
+      <div className="py-20 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-end mb-12">
             <h1 className="text-black text-3xl md:text-4xl font-bold tracking-wide">
@@ -121,14 +126,14 @@ function Home() {
           <div className="flex overflow-x-auto gap-8 pb-8 no-scrollbar snap-x snap-mandatory">
             <div className="min-w-70 md:min-w-[320px] snap-center bg-white p-4 rounded-sm">
               <Imagecard
-                image={Model}
+                image={oversized}
                 name="Oversized T-Shirt"
                 price="Rs. 1200"
               />
             </div>
             <div className="min-w-70 md:min-w-[320px] snap-center bg-white p-4 rounded-sm">
               <Imagecard
-                image={Model}
+                image={hoodie}
                 name="Oversized Hoodie"
                 price="Rs. 5200"
               />
@@ -141,11 +146,15 @@ function Home() {
               />
             </div>
             <div className="min-w-70 md:min-w-[320px] snap-center bg-white p-4 rounded-sm">
-              <Imagecard image={Model} name="SweathShirt" price="Rs. 9400" />
+              <Imagecard
+                image={sweatshirt}
+                name="SweatShirt"
+                price="Rs. 3400"
+              />
             </div>
             <div className="min-w-70 md:min-w-[320px] snap-center bg-white p-4 rounded-sm">
               <Imagecard
-                image={femaleModel}
+                image={monochrome}
                 name="MonoChrome Sets"
                 price="Rs. 6700"
               />
@@ -181,7 +190,7 @@ function Home() {
         {/* Category -> Tees */}
         <div className="relative flex-1 group overflow-hidden cursor-pointer border-b md:border-b-0 md:border-r border-gray-900">
           <img
-            src={femaleModel}
+            src={tees}
             alt="Tees"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
@@ -197,7 +206,7 @@ function Home() {
         {/* Category -> Bottoms */}
         <div className="relative flex-1 group overflow-hidden cursor-pointer border-b md:border-b-0 md:border-r border-gray-900">
           <img
-            src={Model}
+            src={femaleModel}
             alt="Bottoms"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
@@ -210,8 +219,78 @@ function Home() {
             </button>
           </div>
         </div>
-
       </div>
+      {/* section 6 -> Footer */}
+      <footer className="bg-black text-white pt-20 pb-10 px-6 border-t border-gray-900">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-16">
+            {/* Left -> NewsLetter */}
+            <div className="flex flex-col gap-6">
+              <h3 className="text-2xl font-bold tracking-tight">
+                JOIN THE DROP LIST
+              </h3>
+              <p className="text-gray-400 max-w-sm">
+                Sign up to get early access to new releases and limited edition
+                drops.
+              </p>
+              <form className="flex w-full max-w-md border-b border-gray-700 py-2">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="bg-transparent flex-1 outline-none text-sm placeholder:text-gray-600"
+                />
+                <button
+                  type="submit"
+                  className="text-sm font-bold hover:text-gray-400 transition-colors"
+                >
+                  SUBSCRIBE
+                </button>
+              </form>
+            </div>
+
+            {/* Right -> Links */}
+            <div className="grid grid-cols-2 gap-8">
+              <div className="flex flex-col gap-4">
+                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                  Explore
+                </h4>
+                <ul className="flex flex-col gap-2 text-sm">
+                  <li className="hover:text-gray-400 cursor-pointer transition">
+                    Shop
+                  </li>
+                  <li className="hover:text-gray-400 cursor-pointer transition">
+                    About
+                  </li>
+                </ul>
+              </div>
+              <div className="flex flex-col gap-4">
+                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                  Support
+                </h4>
+                <ul className="flex flex-col gap-2 text-sm">
+                  <li className="hover:text-gray-400 cursor-pointer transition">
+                    Contact
+                  </li>
+                  <li className="hover:text-gray-400 cursor-pointer transition">
+                    Privacy Policy
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom -> VantaWear Logo */}
+          <div className="pt-10 border-t border-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
+            <span className="text-2xl font-black tracking-tighter">
+              VANTAWEAR
+            </span>
+            <p className="text-[10px] text-gray-600 tracking-widest uppercase">
+              &copy; {new Date().getFullYear()} VantaWear. All rights reserved.
+              HARSHIT PANT
+            </p>
+          </div>
+        </div>
+      </footer>
     </>
   );
 }
