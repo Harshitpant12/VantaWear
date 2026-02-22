@@ -107,7 +107,7 @@ function Home() {
           </div>
         </div>
       </div>
-      {/* section   4 -> Best Sellers */}
+      {/* section 4 -> Best Sellers */}
       <div className="py-20 px-6 bg-white text-black">
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-end mb-12">
@@ -159,6 +159,58 @@ function Home() {
             </div>
           </div>
         </div>
+      </div>
+      {/* section 5 -> Category Preview */}
+      <div className="flex flex-col md:flex-row w-full h-[150vh] md:h-[80vh] overflow-hidden">
+        {/* Category -> Hoodies */}
+        <div className="relative flex-1 group overflow-hidden cursor-pointer border-b md:border-b-0 md:border-r border-gray-900">
+          <img
+            src={Model}
+            alt="Hoodies"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500 flex flex-col items-center justify-center">
+            <h2 className="text-white text-4xl md:text-5xl font-bold tracking-tighter mb-4">
+              HOODIES
+            </h2>
+            <button className="text-white border-b-2 border-white pb-1 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500 uppercase tracking-widest">
+              Explore Collection
+            </button>
+          </div>
+        </div>
+        {/* Category -> Tees */}
+        <div className="relative flex-1 group overflow-hidden cursor-pointer border-b md:border-b-0 md:border-r border-gray-900">
+          <img
+            src={femaleModel}
+            alt="Tees"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500 flex flex-col items-center justify-center">
+            <h2 className="text-white text-4xl md:text-5xl font-bold tracking-tighter mb-4">
+              TEES
+            </h2>
+            <button className="text-white border-b-2 border-white pb-1 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500 uppercase tracking-widest">
+              Explore Collection
+            </button>
+          </div>
+        </div>
+        {/* Category -> Bottoms */}
+        <div className="relative flex-1 group overflow-hidden cursor-pointer border-b md:border-b-0 md:border-r border-gray-900">
+          <img
+            src={Model}
+            alt="Bottoms"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500 flex flex-col items-center justify-center">
+            <h2 className="text-white text-4xl md:text-5xl font-bold tracking-tighter mb-4">
+              BOTTOMS
+            </h2>
+            <button className="text-white border-b-2 border-white pb-1 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500 uppercase tracking-widest">
+              Explore Collection
+            </button>
+          </div>
+        </div>
+
       </div>
     </>
   );
