@@ -1,5 +1,5 @@
 import React from "react";
-import { Feather, Package, Shirt } from "lucide-react";
+import { Feather, MoveRightIcon, Package, Shirt } from "lucide-react";
 
 import Model from "../../assets/model.png";
 import femaleModel from "../../assets/femaleModel.png";
@@ -29,21 +29,33 @@ function Home() {
         </div>
       </div>
       {/* section 2 -> Featured Drop */}
-      <div className="py-20 px-6 bg-white">
+      <div className="py-20 px-6 bg-black text-white">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-center text-3xl md:text-4xl font-bold mb-16 tracking-wide">
             Featured
           </h1>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-            <Imagecard image={Model} name="Hoodie" price="Rs. 8000" />
-            <Imagecard image={femaleModel} name="Cargo" price="Rs. 10000" />
-            <Imagecard image={Model} name="Black Hoodie" price="Rs. 900" />
+            <Imagecard
+              image={femaleModel}
+              name="Cargo pants"
+              price="Rs. 10000"
+            />
+            <Imagecard
+              image={Model}
+              name="Heavyweight Hoodie"
+              price="Rs. 5900"
+            />
+            <Imagecard
+              image={femaleModel}
+              name="MonoChrome sets"
+              price="Rs. 8000"
+            />
           </div>
         </div>
       </div>
       {/* section 3 -> Why VantaWear */}
-      <div className="py-20 px-6 bg-black text-white">
+      <div className="py-20 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-center text-3xl md:text-4xl font-bold mb-16 tracking-wide">
             Why VantaWear
@@ -55,12 +67,12 @@ function Home() {
               <Feather
                 size={40}
                 strokeWidth={1.5}
-                className="text-white group-hover:scale-110 transition duration-300"
+                className="text-black group-hover:scale-110 transition duration-300"
               />
               <h3 className="text-xl font-semibold">
                 Premium Heavyweight Cotton
               </h3>
-              <p className="text-gray-400 max-w-xs">
+              <p className="text-gray-600 max-w-xs">
                 Crafted from 400 GSM heavyweight cotton for structure,
                 durability, and a premium feel.
               </p>
@@ -70,12 +82,12 @@ function Home() {
               <Shirt
                 size={40}
                 strokeWidth={1.5}
-                className="text-white group-hover:scale-110 transition duration-300"
+                className="text-black group-hover:scale-110 transition duration-300"
               />
               <h3 className="text-xl font-semibold">
                 Designed for Everyday Wear
               </h3>
-              <p className="text-gray-400 max-w-xs">
+              <p className="text-gray-600 max-w-xs">
                 Built for movement. Tailored for comfort. Designed to elevate
                 everyday essentials.
               </p>
@@ -85,12 +97,65 @@ function Home() {
               <Package
                 size={40}
                 strokeWidth={1.5}
-                className="text-white group-hover:scale-110 transition duration-300"
+                className="text-black group-hover:scale-110 transition duration-300"
               />
               <h3 className="text-xl font-semibold">Limited Edition Drops</h3>
-              <p className="text-gray-400 max-w-xs">
+              <p className="text-gray-600 max-w-xs">
                 Small batch releases. No restocks. Once it's gone, it's gone.
               </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* section   4 -> Best Sellers */}
+      <div className="py-20 px-6 bg-white text-black">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex justify-between items-end mb-12">
+            <h1 className="text-black text-3xl md:text-4xl font-bold tracking-wide">
+              Best Sellers
+            </h1>
+            <p className="text-gray-600 hidden sm:block">Scroll to explore →</p>
+          </div>
+
+          {/* Carousel Container */}
+          <div className="flex overflow-x-auto gap-8 pb-8 no-scrollbar snap-x snap-mandatory">
+            <div className="min-w-70 md:min-w-[320px] snap-center bg-white p-4 rounded-sm">
+              <Imagecard
+                image={Model}
+                name="Oversized T-Shirt"
+                price="Rs. 1200"
+              />
+            </div>
+            <div className="min-w-70 md:min-w-[320px] snap-center bg-white p-4 rounded-sm">
+              <Imagecard
+                image={Model}
+                name="Oversized Hoodie"
+                price="Rs. 5200"
+              />
+            </div>
+            <div className="min-w-70 md:min-w-[320px] snap-center bg-white p-4 rounded-sm">
+              <Imagecard
+                image={femaleModel}
+                name="Cargo Pants"
+                price="Rs. 7900"
+              />
+            </div>
+            <div className="min-w-70 md:min-w-[320px] snap-center bg-white p-4 rounded-sm">
+              <Imagecard image={Model} name="SweathShirt" price="Rs. 9400" />
+            </div>
+            <div className="min-w-70 md:min-w-[320px] snap-center bg-white p-4 rounded-sm">
+              <Imagecard
+                image={femaleModel}
+                name="MonoChrome Sets"
+                price="Rs. 6700"
+              />
+            </div>
+            <div className="min-w-70 md:min-w-[320px] snap-center bg-white p-4 rounded-sm">
+              <Imagecard
+                image={Model}
+                name="Out of name :("
+                price="Rs. 00(free) :)"
+              />
             </div>
           </div>
         </div>
