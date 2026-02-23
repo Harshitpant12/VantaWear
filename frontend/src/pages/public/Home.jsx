@@ -45,16 +45,19 @@ function Home() {
               image={femaleModel}
               name="Cargo pants"
               price="Rs. 10000"
+              dark={true}
             />
             <Imagecard
               image={Model}
               name="Heavyweight Hoodie"
               price="Rs. 5900"
+              dark={true}
             />
             <Imagecard
               image={monochrome}
               name="MonoChrome sets"
               price="Rs. 8000"
+              dark={true}
             />
           </div>
         </div>
@@ -104,7 +107,9 @@ function Home() {
                 strokeWidth={1.5}
                 className="text-black group-hover:scale-110 transition duration-300"
               />
-              <h3 className="text-lg font-black uppercase tracking-tight text-black mt-2">Limited Edition Drops</h3>
+              <h3 className="text-lg font-black uppercase tracking-tight text-black mt-2">
+                Limited Edition Drops
+              </h3>
               <p className="text-gray-500 text-sm font-medium leading-relaxed max-w-xs">
                 Small batch releases. No restocks. Once it's gone, it's gone.
               </p>

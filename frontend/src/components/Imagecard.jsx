@@ -1,17 +1,29 @@
 import React from "react";
 
-function Imagecard(prop) {
+function Imagecard({ name, image, price, dark = false }) {
   return (
-    <div className="flex flex-col items-center min-h-96 w-full max-w-xs mx-auto group  pb-4 rounded-3xl border border-gray-100 shadow-2xl cursor-pointer overflow-hidden relative gap-6 transition duration-300">
+    <div className="flex flex-col w-full group cursor-pointer relative">
       {/* image */}
-      <img
-        src={prop.image}
-        className="w-full h-80 object-cover rounded-3xl transition-transform duration-500 group-hover:scale-105"
-      />
+      <div className="relative w-full aspect-4/5 overflow-hidden bg-gray-50 mb-4">
+        <img
+          src={image}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+        {/* Subtle Dark Overlay on Hover */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500 z-10"></div>
+      </div>
       {/* name & price */}
-      <div className="flex justify-between items-center w-full px-4 font-semibold">
-        <p>{prop.name}</p>
-        <p>{prop.price}</p>
+      <div className="flex justify-between items-start w-full">
+        <h3
+          className={`text-sm font-black uppercase tracking-tight transition-colors ${dark ? " text-white group-hover:text-gray-300" : " text-black group-hover:text-gray-500"}`}
+        >
+          {name}
+        </h3>
+        <p
+          className={`text-sm font-bold whitespace-nowrap ml-4 ${dark ? "text-gray-400" : "text-gray-500"}`}
+        >
+          {price}
+        </p>
       </div>
     </div>
   );
