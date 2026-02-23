@@ -18,7 +18,7 @@ function Sidebar ({isOpen, closeMenu}){
                 <div className="flex flex-col gap-4">
                     {["Hoodies", "Tees", "Bottoms", "Sets", "Outerwear"].map((category) => (
                         <label key={category} className="flex items-center gap-3 cursor-pointer group">
-                            <input type="checkbox" className="w-5 h-5 border border-black appearance-none checked:bg-black relative after:content-[''] after:absolute after:top-1/2 after:left-1/2 after:-translate-x-1/2 after:translate-y-1/2 after:w-2 after:h-2 after:bg-white after:opacity-0 checked:after:opacity-100 transition-colors cursor-pointer" />
+                            <input type="checkbox" className="w-5 h-5 border border-black appearance-none checked:bg-black relative after:content-[''] after:absolute after:top-1/2 after:left-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:opacity-0 checked:after:opacity-100 transition-colors cursor-pointer" />
                             <span className="text-gray-600 group-hover:text-black transition-colors">{category}</span>
                         </label>
                     ))}
@@ -40,7 +40,7 @@ function Sidebar ({isOpen, closeMenu}){
             {/* Price Filtering */}
             <div className="mb-10">
                 <h3 className="text-sm font-bold text-black uppercase tracking-widest mb-6">Price</h3>
-                <div className="grid grid-cols-4 gap-3">
+                <div className="flex flex-col gap-4">
                     {["Under Rs. 5000", "Rs. 5000 - Rs. 10000", "Over Rs. 10000"].map((price) => (
                         <label key={price} className="flex items-center gap-3 cursor-pointer group">
                             <input type="radio" name="price" className="w-5 h-5 border border-black rounded-full appearance-none checked:bg-black relative after:content-[''] after:absolute after:top-1/2 after:left-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full after:opacity-0 checked:after:opacity-100 transition-colors cursor-pointer" />
