@@ -7,10 +7,12 @@ import Productdetails from "./pages/public/Productdetails";
 import Category from "./pages/public/Category";
 import Search from "./pages/public/Search";
 import Cart from "./pages/public/Cart";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <>
+      <Navbar/>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/shop" element={<Shop />} />

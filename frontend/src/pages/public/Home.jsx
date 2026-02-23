@@ -24,20 +24,20 @@ function Home() {
           <img src={Model} className="w-full h-full object-cover" />
         </div>
         {/* Center */}
-        <div className="absolute inset-0 flex flex-col justify-end lg:justify-center py-16 lg:gap-8 items-center pointer-events-none">
-          <h1 className="text-white text-5xl font-bold drop-shadow-lg text-center pointer-events-auto hidden lg:block">
+        <div className="absolute inset-0 flex flex-col justify-end lg:justify-center py-20 lg:gap-8 items-center pointer-events-none">
+          <h1 className="text-white text-6xl md:text-8xl font-black uppercase tracking-tighter drop-shadow-2xl text-center pointer-events-auto hidden lg:block">
             OWN THE SILENCE
           </h1>
-          <button className="px-8 py-3 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition cursor-pointer hover:scale-105 active:scale-95 pointer-events-auto">
-            Shop Now
+          <button className="px-10 py-4 bg-white text-black font-bold uppercase tracking-widest text-sm border-2 border-transparent hover:bg-black hover:text-white hover:border-white transition-all duration-300 pointer-events-auto">
+            Shop Collection
           </button>
         </div>
       </div>
       {/* section 2 -> Featured Drop */}
       <div className="py-20 px-6 bg-black text-white">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-center text-3xl md:text-4xl font-bold mb-16 tracking-wide">
-            Featured
+          <h1 className="text-center text-4xl md:text-5xl font-black uppercase mb-16 tracking-tighter">
+            Featured Drops
           </h1>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
@@ -62,7 +62,7 @@ function Home() {
       {/* section 3 -> Why VantaWear */}
       <div className="py-20 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-center text-3xl md:text-4xl font-bold mb-16 tracking-wide">
+          <h1 className="text-center text-4xl md:text-5xl font-black uppercase mb-16 tracking-tighter text-black">
             Why VantaWear
           </h1>
 
@@ -74,10 +74,10 @@ function Home() {
                 strokeWidth={1.5}
                 className="text-black group-hover:scale-110 transition duration-300"
               />
-              <h3 className="text-xl font-semibold">
+              <h3 className="text-lg font-black uppercase tracking-tight text-black mt-2">
                 Premium Heavyweight Cotton
               </h3>
-              <p className="text-gray-600 max-w-xs">
+              <p className="text-gray-500 text-sm font-medium leading-relaxed max-w-xs">
                 Crafted from 400 GSM heavyweight cotton for structure,
                 durability, and a premium feel.
               </p>
@@ -89,10 +89,10 @@ function Home() {
                 strokeWidth={1.5}
                 className="text-black group-hover:scale-110 transition duration-300"
               />
-              <h3 className="text-xl font-semibold">
+              <h3 className="text-lg font-black uppercase tracking-tight text-black mt-2">
                 Designed for Everyday Wear
               </h3>
-              <p className="text-gray-600 max-w-xs">
+              <p className="text-gray-500 text-sm font-medium leading-relaxed max-w-xs">
                 Built for movement. Tailored for comfort. Designed to elevate
                 everyday essentials.
               </p>
@@ -104,8 +104,8 @@ function Home() {
                 strokeWidth={1.5}
                 className="text-black group-hover:scale-110 transition duration-300"
               />
-              <h3 className="text-xl font-semibold">Limited Edition Drops</h3>
-              <p className="text-gray-600 max-w-xs">
+              <h3 className="text-lg font-black uppercase tracking-tight text-black mt-2">Limited Edition Drops</h3>
+              <p className="text-gray-500 text-sm font-medium leading-relaxed max-w-xs">
                 Small batch releases. No restocks. Once it's gone, it's gone.
               </p>
             </div>
@@ -115,11 +115,13 @@ function Home() {
       {/* section 4 -> Best Sellers */}
       <div className="py-20 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
-          <div className="flex justify-between items-end mb-12">
-            <h1 className="text-black text-3xl md:text-4xl font-bold tracking-wide">
-              Best Sellers
+          <div className="flex justify-between items-end mb-12 border-b border-gray-200 pb-4">
+            <h1 className="text-black text-4xl md:text-5xl font-black uppercase tracking-tighter">
+              BEST SELLERS
             </h1>
-            <p className="text-gray-600 hidden sm:block">Scroll to explore →</p>
+            <p className="text-gray-500 text-xs font-bold uppercase tracking-widest hidden sm:block">
+              Scroll to explore →
+            </p>
           </div>
 
           {/* Carousel Container */}
