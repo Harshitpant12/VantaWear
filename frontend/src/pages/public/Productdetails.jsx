@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ChevronDown, ChevronUp, X } from "lucide-react";
+import { useParams } from "react-router-dom";
 
 import Imagecard from "../../components/Imagecard";
 import { useCart } from "../../context/CartContext";
@@ -17,8 +18,11 @@ const relatedProducts = [
 ];
 
 function Productdetails() {
+  const { id } = useParams();
   const [selectedSize, setSelectedSize] = useState("");
   const [showError, setShowError] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+
   const [openAccordion, setOpenAccordion] = useState("details");
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
@@ -39,7 +43,8 @@ function Productdetails() {
     }
     setShowError(false);
     addToCart(currentProduct, selectedSize);
-    alert("Added to cart!"); // later we can use react hot toast instead
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000); // shows for 3 seconds
   };
 
   const toggleAccordion = (section) => {
@@ -48,6 +53,18 @@ function Productdetails() {
 
   return (
     <div className="min-h-screen bg-white relative">
+      <div
+        className={`fixed bottom-8 right-8 z-50 bg-black text-white px-8 py-4 shadow-2xl transition-all duration-500 transform ${
+          showToast
+            ? "translate-y-0 opacity-100"
+            : "translate-y-10 opacity-0 pointer-events-none"
+        }`}
+      >
+        <p className="text-sm font-bold uppercase tracking-widest flex items-center gap-3">
+          <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+          Added to Cart
+        </p>
+      </div>
       {isSizeGuideOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           {/* Modal Container */}
