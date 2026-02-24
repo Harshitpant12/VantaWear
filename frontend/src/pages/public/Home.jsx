@@ -1,16 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Feather, Package, Shirt } from "lucide-react";
+import { Link } from "react-router-dom";
+import api from "../../api/axios";
+import Imagecard from "../../components/Imagecard";
 
 import Model from "../../assets/model.png";
 import femaleModel from "../../assets/femaleModel.png";
 import tees from "../../assets/TEES.png";
-import monochrome from "../../assets/monochrome.png";
-import sweatshirt from "../../assets/sweatshirt.png";
-import hoodie from "../../assets/hoodie.png";
-import oversized from "../../assets/oversized.png";
-import Imagecard from "../../components/Imagecard";
 
 function Home() {
+  const [featuredDrops, setFeaturedDrops] = useState([]);
+  const [bestSellers, setBestSellers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchHomeData = async () => {
+      try {
+        setIsLoading(true);
+        const featuredRes = await api.get("/products/featured");
+        setFeaturedDrops(featuredRes.data);
+
+        const bestSellers = await api.get("/products?limit=3"); // simple set of products
+        setBestSellers(bestSellers.data.products); // fetching data from the json object provided by backend
+      } catch (error) {
+        console.error("Error fetching home data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchHomeData();
+  }, []);
   return (
     <>
       {/* section 1 -> Hero Banner */}
@@ -28,9 +47,11 @@ function Home() {
           <h1 className="text-white text-6xl md:text-8xl font-black uppercase tracking-tighter drop-shadow-2xl text-center pointer-events-auto hidden lg:block">
             OWN THE SILENCE
           </h1>
-          <button className="px-10 py-4 bg-white text-black font-bold uppercase tracking-widest text-sm border-2 border-transparent hover:bg-black hover:text-white hover:border-white transition-all duration-300 pointer-events-auto">
-            Shop Collection
-          </button>
+          <Link to="/shop" className="pointer-events-auto">
+            <button className="px-10 py-4 bg-white text-black font-bold uppercase tracking-widest text-sm border-2 border-transparent hover:bg-black hover:text-white hover:border-white transition-all duration-300 pointer-events-auto">
+              Shop Collection
+            </button>
+          </Link>
         </div>
       </div>
       {/* section 2 -> Featured Drop */}
@@ -40,26 +61,28 @@ function Home() {
             Featured Drops
           </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-            <Imagecard
-              image={femaleModel}
-              name="Cargo pants"
-              price="Rs. 10000"
-              dark={true}
-            />
-            <Imagecard
-              image={Model}
-              name="Heavyweight Hoodie"
-              price="Rs. 5900"
-              dark={true}
-            />
-            <Imagecard
-              image={monochrome}
-              name="MonoChrome sets"
-              price="Rs. 8000"
-              dark={true}
-            />
-          </div>
+          {isLoading ? (
+            <p className="text-center font-bold tracking-widest uppercase text-gray-500 animate-pulse">
+              Loading drops...
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+              {featuredDrops.slice(0, 3).map((product) => (
+                <Link
+                  to={`/products/${product._id}`}
+                  key={product._id}
+                  className="block"
+                >
+                  <Imagecard
+                    image={product.images[0]}
+                    name={product.name}
+                    price={`Rs. ${product.price}`}
+                    dark={true}
+                  />
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       {/* section 3 -> Why VantaWear */}
@@ -130,102 +153,90 @@ function Home() {
           </div>
 
           {/* Carousel Container */}
-          <div className="flex overflow-x-auto gap-8 pb-8 no-scrollbar snap-x snap-mandatory">
-            <div className="min-w-70 md:min-w-[320px] snap-center bg-white p-4 rounded-sm">
-              <Imagecard
-                image={oversized}
-                name="Oversized T-Shirt"
-                price="Rs. 1200"
-              />
+          {isLoading ? (
+            <p className="font-bold tracking-widest uppercase text-gray-400">
+              Loading...
+            </p>
+          ) : (
+            <div className="flex overflow-x-auto gap-8 pb-8 no-scrollbar snap-x snap-mandatory">
+              {bestSellers.map((product) => (
+                <Link
+                  to={`/products/${product._id}`}
+                  key={product._id}
+                  className="min-w-70 md:min-w-[320px] snap-center block"
+                >
+                  <Imagecard
+                    image={product.images[0]}
+                    name={product.name}
+                    price={`Rs. ${product.price}`}
+                  />
+                </Link>
+              ))}
             </div>
-            <div className="min-w-70 md:min-w-[320px] snap-center bg-white p-4 rounded-sm">
-              <Imagecard
-                image={hoodie}
-                name="Oversized Hoodie"
-                price="Rs. 5200"
-              />
-            </div>
-            <div className="min-w-70 md:min-w-[320px] snap-center bg-white p-4 rounded-sm">
-              <Imagecard
-                image={femaleModel}
-                name="Cargo Pants"
-                price="Rs. 7900"
-              />
-            </div>
-            <div className="min-w-70 md:min-w-[320px] snap-center bg-white p-4 rounded-sm">
-              <Imagecard
-                image={sweatshirt}
-                name="SweatShirt"
-                price="Rs. 3400"
-              />
-            </div>
-            <div className="min-w-70 md:min-w-[320px] snap-center bg-white p-4 rounded-sm">
-              <Imagecard
-                image={monochrome}
-                name="MonoChrome Sets"
-                price="Rs. 6700"
-              />
-            </div>
-            <div className="min-w-70 md:min-w-[320px] snap-center bg-white p-4 rounded-sm">
-              <Imagecard
-                image={Model}
-                name="Out of name :("
-                price="Rs. 00(free) :)"
-              />
-            </div>
-          </div>
+          )}
         </div>
       </div>
       {/* section 5 -> Category Preview */}
       <div className="flex flex-col md:flex-row w-full h-[150vh] md:h-[80vh] overflow-hidden">
         {/* Category -> Hoodies */}
-        <div className="relative flex-1 group overflow-hidden cursor-pointer border-b md:border-b-0 md:border-r border-gray-900">
+        <Link
+          to="/category/hoodies"
+          className="relative flex-1 group overflow-hidden cursor-pointer border-b md:border-b-0 md:border-r border-gray-900 block"
+        >
           <img
             src={Model}
             alt="Hoodies"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500 flex flex-col items-center justify-center">
-            <h2 className="text-white text-4xl md:text-5xl font-bold tracking-tighter mb-4">
+            <h2 className="text-white text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">
               HOODIES
             </h2>
-            <button className="text-white border-b-2 border-white pb-1 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500 uppercase tracking-widest">
+            <span className="text-white border-b-2 border-white pb-1 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500 uppercase tracking-widest">
               Explore Collection
-            </button>
+            </span>
           </div>
-        </div>
+        </Link>
+
         {/* Category -> Tees */}
-        <div className="relative flex-1 group overflow-hidden cursor-pointer border-b md:border-b-0 md:border-r border-gray-900">
+        <Link
+          to="/category/tees"
+          className="relative flex-1 group overflow-hidden cursor-pointer border-b md:border-b-0 md:border-r border-gray-900 block"
+        >
           <img
             src={tees}
             alt="Tees"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500 flex flex-col items-center justify-center">
-            <h2 className="text-white text-4xl md:text-5xl font-bold tracking-tighter mb-4">
+            <h2 className="text-white text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">
               TEES
             </h2>
-            <button className="text-white border-b-2 border-white pb-1 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500 uppercase tracking-widest">
+            <span className="text-white border-b-2 border-white pb-1 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500 uppercase tracking-widest">
               Explore Collection
-            </button>
+            </span>
           </div>
-        </div>
+        </Link>
+
         {/* Category -> Bottoms */}
-        <div className="relative flex-1 group overflow-hidden cursor-pointer border-b md:border-b-0 md:border-r border-gray-900">
+        <Link
+          to="/category/bottoms"
+          className="relative flex-1 group overflow-hidden cursor-pointer border-b md:border-b-0 md:border-r border-gray-900 block"
+        >
           <img
             src={femaleModel}
             alt="Bottoms"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500 flex flex-col items-center justify-center">
-            <h2 className="text-white text-4xl md:text-5xl font-bold tracking-tighter mb-4">
+            <h2 className="text-white text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">
               BOTTOMS
             </h2>
-            <button className="text-white border-b-2 border-white pb-1 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500 uppercase tracking-widest">
+            <span className="text-white border-b-2 border-white pb-1 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500 uppercase tracking-widest">
               Explore Collection
-            </button>
+            </span>
           </div>
-        </div>
+        </Link>
       </div>
       {/* section 6 -> Footer */}
       <footer className="bg-black text-white pt-20 pb-10 px-6 border-t border-gray-900">
