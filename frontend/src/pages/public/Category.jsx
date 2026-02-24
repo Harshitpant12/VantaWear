@@ -10,14 +10,6 @@ import hoodie from "../../assets/hoodie.png";
 import femaleModel from "../../assets/femaleModel.png";
 import tees from "../../assets/TEES.png";
 
-// // Dummy data
-// const categoryProducts = [
-//   { id: 1, image: oversized, name: "Oversized T-Shirt", price: "Rs. 1200" },
-//   { id: 2, image: hoodie, name: "Heavyweight Hoodie", price: "Rs. 5900" },
-//   { id: 3, image: femaleModel, name: "Cargo Pants", price: "Rs. 7900" },
-//   { id: 4, image: sweatshirt, name: "Essential Sweatshirt", price: "Rs. 3400" },
-// ];
-
 function Category() {
   const { slug } = useParams(); // Grabs the category name from the URL (e.g. 'hoodies')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

@@ -28,6 +28,7 @@ function Productdetails() {
   const { addToCart } = useCart();
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     const fetchProductData = async () => {
       try {
         setIsLoading(true);
