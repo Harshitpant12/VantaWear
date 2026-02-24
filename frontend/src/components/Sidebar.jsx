@@ -1,8 +1,21 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 
-function Sidebar({ isOpen, closeMenu }) {
-  const [selectedSizes, setSelectedSizes] = useState([]);
+function Sidebar({
+  isOpen,
+  closeMenu,
+  selectedCategories,
+  setSelectedCategories,
+  selectedSizes,
+  setSelectedSizes,
+  priceRange,
+  setPriceRange,
+}) {
+  const toggleCategory = (cat) => {
+    setSelectedCategories((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
+    );
+  };
 
   const toggleSize = (size) => {
     setSelectedSizes((prev) =>
@@ -27,22 +40,25 @@ function Sidebar({ isOpen, closeMenu }) {
           Category
         </h3>
         <div className="flex flex-col gap-4">
-          {["Hoodies", "Tees", "Bottoms", "Sets", "Outerwear"].map(
-            (category) => (
-              <label
-                key={category}
-                className="flex items-center gap-3 cursor-pointer group"
-              >
-                <input
-                  type="checkbox"
-                  className="w-5 h-5 border border-black appearance-none checked:bg-black relative after:content-[''] after:absolute after:top-1/2 after:left-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:opacity-0 checked:after:opacity-100 transition-colors cursor-pointer"
-                />
-                <span className="text-gray-600 group-hover:text-black transition-colors">
-                  {category}
-                </span>
-              </label>
-            ),
-          )}
+          {["Hoodies", "Tees", "Bottoms", "Sets", "Outerwear"].map((cat) => (
+            <label
+              key={cat}
+              className="flex items-center gap-3 cursor-pointer group"
+            >
+              <input
+                type="checkbox"
+                checked={selectedCategories.includes(cat.toLowerCase())}
+                onChange={() => toggleCategory(cat.toLowerCase())}
+                className="w-5 h-5 border border-black appearance-none checked:bg-black relative
+                           after:content-[''] after:absolute after:top-1/2 after:left-1/2 
+                           after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 
+                           after:bg-white after:opacity-0 checked:after:opacity-100 transition-colors cursor-pointer"
+              />
+              <span className="text-gray-600 group-hover:text-black transition-colors">
+                {cat}
+              </span>
+            </label>
+          ))}
         </div>
       </div>
 
@@ -52,22 +68,17 @@ function Sidebar({ isOpen, closeMenu }) {
           Size
         </h3>
         <div className="grid grid-cols-4 gap-3">
-          {["S", "M", "L", "XL", "XXL"].map((size) => {
-            const isSelected = selectedSizes.includes(size);
-            return (
-              <button
-                key={size}
-                onClick={() => toggleSize(size)}
-                className={`border border-black py-2 text-sm font-semibold transition-colors duration-300 ${
-                  isSelected
-                    ? "bg-black text-white"
-                    : "bg-white text-black hover:bg-black hover:text-white"
-                }`}
-              >
-                {size}
-              </button>
-            );
-          })}
+          {["S", "M", "L", "XL", "XXL"].map((size) => (
+            <button
+              key={size}
+              onClick={() => toggleSize(size)}
+              className={`border border-black py-2 text-sm font-semibold transition-colors duration-300 
+                ${selectedSizes.includes(size) ? "bg-black text-white" : "bg-white text-black hover:bg-black hover:text-white"}
+              `}
+            >
+              {size}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -86,13 +97,27 @@ function Sidebar({ isOpen, closeMenu }) {
                 <input
                   type="radio"
                   name="price"
-                  className="w-5 h-5 border border-black rounded-full appearance-none checked:bg-black relative after:content-[''] after:absolute after:top-1/2 after:left-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full after:opacity-0 checked:after:opacity-100 transition-colors cursor-pointer"
+                  checked={priceRange === price}
+                  onChange={() => setPriceRange(price)}
+                  className="w-5 h-5 border border-black rounded-full appearance-none checked:bg-black relative
+                           after:content-[''] after:absolute after:top-1/2 after:left-1/2 
+                           after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 
+                           after:bg-white after:rounded-full after:opacity-0 checked:after:opacity-100 transition-colors cursor-pointer"
                 />
                 <span className="text-gray-600 group-hover:text-black transition-colors">
                   {price}
                 </span>
               </label>
             ),
+          )}
+          {/* Clear Price Button */}
+          {priceRange && (
+            <button
+              onClick={() => setPriceRange("")}
+              className="text-xs text-left text-gray-500 underline mt-2 hover:text-black"
+            >
+              Clear Price Filter
+            </button>
           )}
         </div>
       </div>
