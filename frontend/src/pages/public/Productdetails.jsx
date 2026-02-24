@@ -292,7 +292,7 @@ function Productdetails() {
                 className={`overflow-hidden transition-all duration-300 ${openAccordion === "details" ? "max-h-40 pb-5 opacity-100" : "max-h-0 opacity-0"}`}
               >
                 <p className="text-gray-600 text-sm leading-relaxed">
-                  {product.stock_quantity > 0 ? "Add to Cart" : "Out of Stock"}
+                  {product.description}
                 </p>
               </div>
             </div>
