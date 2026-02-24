@@ -7,20 +7,23 @@ import Productdetails from "./pages/public/Productdetails";
 import Category from "./pages/public/Category";
 import Search from "./pages/public/Search";
 import Cart from "./pages/public/Cart";
+import { CartProvider } from "./context/CartContext";
 import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <>
-      <Navbar/>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/shop" element={<Shop />} />
-        <Route path="/product/:id" element={<Productdetails />} />
-        <Route path="/category/:slug" element={<Category />} />
-        <Route path="/search" element={<Search />} />
-        <Route path="/cart" element={<Cart />} />
-      </Routes>
+      <CartProvider>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/product/:id" element={<Productdetails />} />
+          <Route path="/category/:slug" element={<Category />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/cart" element={<Cart />} />
+        </Routes>
+      </CartProvider>
     </>
   );
 }

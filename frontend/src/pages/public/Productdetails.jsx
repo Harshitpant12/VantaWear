@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { ChevronDown, ChevronUp, X } from "lucide-react";
+
 import Imagecard from "../../components/Imagecard";
+import { useCart } from "../../context/CartContext";
 
 import Model from "../../assets/model.png";
 import hoodie from "../../assets/hoodie.png";
@@ -16,10 +18,29 @@ const relatedProducts = [
 
 function Productdetails() {
   const [selectedSize, setSelectedSize] = useState("");
+  const [showError, setShowError] = useState(false);
   const [openAccordion, setOpenAccordion] = useState("details");
-  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false); 
+  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
-  const productImages = [hoodie, Model, monochrome]; 
+  const productImages = [hoodie, Model, monochrome];
+  const { addToCart } = useCart();
+
+  const currentProduct = {
+    id: 101,
+    name: "Heavyweight Hoodie",
+    price: 5900,
+    image: hoodie,
+  };
+
+  const handleAddToCart = () => {
+    if (!selectedSize) {
+      setShowError(true);
+      return;
+    }
+    setShowError(false);
+    addToCart(currentProduct, selectedSize);
+    alert("Added to cart!"); // later we can use react hot toast instead
+  };
 
   const toggleAccordion = (section) => {
     setOpenAccordion(openAccordion === section ? "" : section);
@@ -27,14 +48,12 @@ function Productdetails() {
 
   return (
     <div className="min-h-screen bg-white relative">
-      
       {isSizeGuideOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           {/* Modal Container */}
           <div className="bg-white w-full max-w-2xl p-8 md:p-12 relative border-2 border-black shadow-2xl animate-in fade-in zoom-in-95 duration-300">
-            
             {/* Close Button */}
-            <button 
+            <button
               onClick={() => setIsSizeGuideOpen(false)}
               className="absolute top-4 right-4 p-2 text-gray-400 hover:text-black hover:scale-110 transition-all"
             >
@@ -67,7 +86,10 @@ function Productdetails() {
                     { size: "XL", chest: "50", length: "29", sleeve: "37" },
                     { size: "XXL", chest: "52", length: "30", sleeve: "38" },
                   ].map((row, idx) => (
-                    <tr key={idx} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                    <tr
+                      key={idx}
+                      className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+                    >
                       <td className="py-4 pr-6 font-black">{row.size}</td>
                       <td className="py-4 px-6 text-gray-600">{row.chest}</td>
                       <td className="py-4 px-6 text-gray-600">{row.length}</td>
@@ -80,24 +102,24 @@ function Productdetails() {
 
             <div className="mt-8 pt-6 border-t border-gray-200">
               <p className="text-xs text-gray-500 uppercase tracking-widest leading-relaxed">
-                * Measurements are taken with the garment laying flat. For a boxier fit, we recommend going true to size. For an oversized fit, size up.
+                * Measurements are taken with the garment laying flat. For a
+                boxier fit, we recommend going true to size. For an oversized
+                fit, size up.
               </p>
             </div>
-
           </div>
         </div>
       )}
 
       {/* SECTION 1 & 2 -> Split Screen Layout */}
       <div className="flex flex-col lg:flex-row w-full">
-        
         {/* Left Side: Image Gallery (60%) */}
         <div className="w-full lg:w-[60%] flex flex-col gap-1 md:gap-4 bg-gray-50">
           {productImages.map((img, index) => (
-            <img 
+            <img
               key={index}
-              src={img} 
-              alt={`Product View ${index + 1}`} 
+              src={img}
+              alt={`Product View ${index + 1}`}
               className="w-full h-auto object-cover"
             />
           ))}
@@ -105,7 +127,6 @@ function Productdetails() {
 
         {/* Right Side: Product Info (40%) */}
         <div className="w-full lg:w-[40%] px-6 py-12 lg:p-16 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto no-scrollbar">
-          
           <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-6 cursor-pointer">
             Home / Shop / <span className="text-black">Heavyweight Hoodie</span>
           </p>
@@ -120,28 +141,33 @@ function Productdetails() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
             </span>
-            <span className="text-xs font-bold uppercase tracking-widest">In Stock</span>
+            <span className="text-xs font-bold uppercase tracking-widest">
+              In Stock
+            </span>
           </div>
 
           <div className="mb-10">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-sm font-bold uppercase tracking-widest">Select Size</h3>
-              <button 
+              <h3 className="text-sm font-bold uppercase tracking-widest">
+                Select Size
+              </h3>
+              <button
                 onClick={() => setIsSizeGuideOpen(true)}
                 className="text-xs text-gray-500 underline uppercase tracking-widest hover:text-black transition-colors"
               >
                 Size Guide
               </button>
             </div>
-            
+
             <div className="grid grid-cols-5 gap-3">
               {["S", "M", "L", "XL", "XXL"].map((size) => (
                 <button
                   key={size}
                   onClick={() => setSelectedSize(size)}
                   className={`border border-black py-3 text-sm font-semibold transition-colors duration-300 
-                    ${selectedSize === size 
-                        ? "bg-black text-white" 
+                    ${
+                      selectedSize === size
+                        ? "bg-black text-white"
                         : "bg-white text-black hover:bg-black hover:text-white"
                     }
                   `}
@@ -150,39 +176,62 @@ function Productdetails() {
                 </button>
               ))}
             </div>
+
+            {/* Show error if size is not selected */}
+            {showError && (
+              <p className="text-red-500 text-xs mt-3 uppercase tracking-widest font-bold">
+                * Please select a size
+              </p>
+            )}
           </div>
 
-          <button className="w-full bg-black text-white py-5 font-bold uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-transform duration-300 mb-12">
+          <button
+            onClick={handleAddToCart}
+            className="w-full bg-black text-white py-5 font-bold uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-transform duration-300 mb-12"
+          >
             Add to Cart
           </button>
 
           {/* SECTION 3 -> Details & Care */}
           <div className="border-t border-gray-200">
-            
             <div className="border-b border-gray-200">
-              <button 
-                onClick={() => toggleAccordion('details')}
+              <button
+                onClick={() => toggleAccordion("details")}
                 className="w-full py-5 flex justify-between items-center text-sm font-bold uppercase tracking-widest"
               >
                 Product Details
-                {openAccordion === 'details' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                {openAccordion === "details" ? (
+                  <ChevronUp size={18} />
+                ) : (
+                  <ChevronDown size={18} />
+                )}
               </button>
-              <div className={`overflow-hidden transition-all duration-300 ${openAccordion === 'details' ? 'max-h-40 pb-5 opacity-100' : 'max-h-0 opacity-0'}`}>
+              <div
+                className={`overflow-hidden transition-all duration-300 ${openAccordion === "details" ? "max-h-40 pb-5 opacity-100" : "max-h-0 opacity-0"}`}
+              >
                 <p className="text-gray-600 text-sm leading-relaxed">
-                  The quintessential heavyweight hoodie. Boxy fit, dropped shoulders, and a cropped hem. Designed for everyday wear and layering.
+                  The quintessential heavyweight hoodie. Boxy fit, dropped
+                  shoulders, and a cropped hem. Designed for everyday wear and
+                  layering.
                 </p>
               </div>
             </div>
 
             <div className="border-b border-gray-200">
-              <button 
-                onClick={() => toggleAccordion('materials')}
+              <button
+                onClick={() => toggleAccordion("materials")}
                 className="w-full py-5 flex justify-between items-center text-sm font-bold uppercase tracking-widest"
               >
                 Materials & Care
-                {openAccordion === 'materials' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                {openAccordion === "materials" ? (
+                  <ChevronUp size={18} />
+                ) : (
+                  <ChevronDown size={18} />
+                )}
               </button>
-              <div className={`overflow-hidden transition-all duration-300 ${openAccordion === 'materials' ? 'max-h-40 pb-5 opacity-100' : 'max-h-0 opacity-0'}`}>
+              <div
+                className={`overflow-hidden transition-all duration-300 ${openAccordion === "materials" ? "max-h-40 pb-5 opacity-100" : "max-h-0 opacity-0"}`}
+              >
                 <ul className="text-gray-600 text-sm leading-relaxed list-disc pl-4 flex flex-col gap-1">
                   <li>400 GSM Heavyweight French Terry Cotton</li>
                   <li>100% Cotton</li>
@@ -192,20 +241,26 @@ function Productdetails() {
             </div>
 
             <div className="border-b border-gray-200">
-              <button 
-                onClick={() => toggleAccordion('shipping')}
+              <button
+                onClick={() => toggleAccordion("shipping")}
                 className="w-full py-5 flex justify-between items-center text-sm font-bold uppercase tracking-widest"
               >
                 Shipping & Returns
-                {openAccordion === 'shipping' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                {openAccordion === "shipping" ? (
+                  <ChevronUp size={18} />
+                ) : (
+                  <ChevronDown size={18} />
+                )}
               </button>
-              <div className={`overflow-hidden transition-all duration-300 ${openAccordion === 'shipping' ? 'max-h-40 pb-5 opacity-100' : 'max-h-0 opacity-0'}`}>
+              <div
+                className={`overflow-hidden transition-all duration-300 ${openAccordion === "shipping" ? "max-h-40 pb-5 opacity-100" : "max-h-0 opacity-0"}`}
+              >
                 <p className="text-gray-600 text-sm leading-relaxed">
-                  Free shipping on all orders over Rs. 10000. All limited drops are final sale. See our return policy for full details.
+                  Free shipping on all orders over Rs. 10000. All limited drops
+                  are final sale. See our return policy for full details.
                 </p>
               </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -216,10 +271,13 @@ function Productdetails() {
           <h2 className="text-black text-2xl md:text-3xl font-black uppercase tracking-tighter mb-10 text-center md:text-left">
             Complete The Look
           </h2>
-          
+
           <div className="flex overflow-x-auto gap-8 pb-8 no-scrollbar snap-x snap-mandatory">
             {relatedProducts.map((product) => (
-              <div key={product.id} className="min-w-70 md:min-w-[320px] snap-center">
+              <div
+                key={product.id}
+                className="min-w-70 md:min-w-[320px] snap-center"
+              >
                 <Imagecard
                   image={product.image}
                   name={product.name}
@@ -230,7 +288,6 @@ function Productdetails() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }
