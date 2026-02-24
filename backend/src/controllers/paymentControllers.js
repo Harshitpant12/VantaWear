@@ -1,4 +1,4 @@
-import { stripe } from "../lib/stripe.js"
+// import { stripe } from "../lib/stripe.js"
 
 export const createPaymentIntent = async (req, res) => {
     const { cartItems, shippingAddress} = req.body

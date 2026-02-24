@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, X } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
+import api from "../../api/axios";
 import Imagecard from "../../components/Imagecard";
 import { useCart } from "../../context/CartContext";
 
@@ -10,31 +11,46 @@ import hoodie from "../../assets/hoodie.png";
 import monochrome from "../../assets/monochrome.png";
 import oversized from "../../assets/oversized.png";
 
-const relatedProducts = [
-  { id: 1, image: oversized, name: "Oversized T-Shirt", price: "Rs. 1200" },
-  { id: 2, image: monochrome, name: "Monochrome Sets", price: "Rs. 8000" },
-  { id: 3, image: Model, name: "Signature Jacket", price: "Rs. 12000" },
-  { id: 4, image: hoodie, name: "Zip-Up Hoodie", price: "Rs. 6200" },
-];
-
 function Productdetails() {
   const { id } = useParams();
+
+  const [product, setProduct] = useState(null);
+  const [related, setRelated] = useState([]); // this will be used for complete the look section
+  const [isLoading, setIsLoading] = useState(null);
+  const [error, setError] = useState(null);
+
   const [selectedSize, setSelectedSize] = useState("");
   const [showError, setShowError] = useState(false);
   const [showToast, setShowToast] = useState(false);
-
   const [openAccordion, setOpenAccordion] = useState("details");
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
-  const productImages = [hoodie, Model, monochrome];
   const { addToCart } = useCart();
 
-  const currentProduct = {
-    id: 101,
-    name: "Heavyweight Hoodie",
-    price: 5900,
-    image: hoodie,
-  };
+  useEffect(() => {
+    const fetchProductData = async () => {
+      try {
+        setIsLoading(true);
+        // fetching the product
+        const { data } = await api.get(`/products/${id}`); // the same route we used in backend
+        setProduct(data);
+
+        // fetching related products (Complete the look)
+        if (data.category) {
+          const relatedRes = await api.get(
+            `/products?category=${data.category}&limit=4`,
+          ); // will implement it properly soon...
+          setRelated(relatedRes.data.products.filter((p) => p._id !== id));
+        }
+      } catch (error) {
+        console.error("Error fetching product : ", error);
+        setError("Failed to load product details");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchProductData();
+  }, [id]); // re-render or re-run on id change in url
 
   const handleAddToCart = () => {
     if (!selectedSize) {
@@ -42,7 +58,12 @@ function Productdetails() {
       return;
     }
     setShowError(false);
-    addToCart(currentProduct, selectedSize);
+    addToCart({
+      id: product._id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0],
+    });
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000); // shows for 3 seconds
   };
@@ -50,6 +71,32 @@ function Productdetails() {
   const toggleAccordion = (section) => {
     setOpenAccordion(openAccordion === section ? "" : section);
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <p className="text-xl font-black uppercase tracking-widest text-gray-500 animate-pulse">
+          Loading Drop...
+        </p>
+      </div>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-white text-center px-6">
+        <h1 className="text-4xl font-black uppercase tracking-tighter mb-4">
+          Product Not Found
+        </h1>
+        <Link
+          to="/shop"
+          className="underline font-bold uppercase tracking-widest text-sm"
+        >
+          Return to Shop
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white relative">
@@ -132,11 +179,11 @@ function Productdetails() {
       <div className="flex flex-col lg:flex-row w-full">
         {/* Left Side: Image Gallery (60%) */}
         <div className="w-full lg:w-[60%] flex flex-col gap-1 md:gap-4 bg-gray-50">
-          {productImages.map((img, index) => (
+          {product.images?.map((imgUrl, index) => (
             <img
               key={index}
-              src={img}
-              alt={`Product View ${index + 1}`}
+              src={imgUrl}
+              alt={`${product.name} View ${index + 1}`}
               className="w-full h-auto object-cover"
             />
           ))}
@@ -145,22 +192,33 @@ function Productdetails() {
         {/* Right Side: Product Info (40%) */}
         <div className="w-full lg:w-[40%] px-6 py-12 lg:p-16 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto no-scrollbar">
           <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-6 cursor-pointer">
-            Home / Shop / <span className="text-black">Heavyweight Hoodie</span>
+            Home / Shop / <span className="text-black">{product.name}</span>
           </p>
 
           <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">
-            Heavyweight Hoodie
+            {product.name}
           </h1>
-          <p className="text-2xl tracking-wide mb-6">Rs. 5900</p>
+          <p className="text-2xl tracking-wide mb-6">{product.price}</p>
 
           <div className="flex items-center gap-3 mb-10">
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-            </span>
-            <span className="text-xs font-bold uppercase tracking-widest">
-              In Stock
-            </span>
+            {product.stock_quantity > 0 ? (
+              <>
+                <span className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                </span>
+                <span className="text-xs font-bold uppercase tracking-widest">
+                  In Stock
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                <span className="text-xs font-bold uppercase tracking-widest text-red-500">
+                  Sold Out
+                </span>
+              </>
+            )}
           </div>
 
           <div className="mb-10">
@@ -204,9 +262,16 @@ function Productdetails() {
 
           <button
             onClick={handleAddToCart}
-            className="w-full bg-black text-white py-5 font-bold uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-transform duration-300 mb-12"
+            disabled={product.stock_quantity <= 0}
+            className={`w-full py-5 font-bold uppercase tracking-widest transition-transform duration-300 mb-12
+                ${
+                  product.stock_quantity > 0
+                    ? "bg-black text-white hover:scale-[1.02] active:scale-95"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }
+            `}
           >
-            Add to Cart
+            {product.stock_quantity > 0 ? "Add to Cart" : "Out of Stock"}
           </button>
 
           {/* SECTION 3 -> Details & Care */}
@@ -227,9 +292,7 @@ function Productdetails() {
                 className={`overflow-hidden transition-all duration-300 ${openAccordion === "details" ? "max-h-40 pb-5 opacity-100" : "max-h-0 opacity-0"}`}
               >
                 <p className="text-gray-600 text-sm leading-relaxed">
-                  The quintessential heavyweight hoodie. Boxy fit, dropped
-                  shoulders, and a cropped hem. Designed for everyday wear and
-                  layering.
+                  {product.stock_quantity > 0 ? "Add to Cart" : "Out of Stock"}
                 </p>
               </div>
             </div>
@@ -239,7 +302,7 @@ function Productdetails() {
                 onClick={() => toggleAccordion("materials")}
                 className="w-full py-5 flex justify-between items-center text-sm font-bold uppercase tracking-widest"
               >
-                Materials & Care
+                Materials & Care {/* will implement them later */}
                 {openAccordion === "materials" ? (
                   <ChevronUp size={18} />
                 ) : (
@@ -283,28 +346,30 @@ function Productdetails() {
       </div>
 
       {/* SECTION 4 -> Complete The Look */}
-      <div className="w-full bg-white py-20 px-6 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-black text-2xl md:text-3xl font-black uppercase tracking-tighter mb-10 text-center md:text-left">
-            Complete The Look
-          </h2>
-
-          <div className="flex overflow-x-auto gap-8 pb-8 no-scrollbar snap-x snap-mandatory">
-            {relatedProducts.map((product) => (
-              <div
-                key={product.id}
-                className="min-w-70 md:min-w-[320px] snap-center"
-              >
-                <Imagecard
-                  image={product.image}
-                  name={product.name}
-                  price={product.price}
-                />
-              </div>
-            ))}
+      {related.length > 0 && (
+        <div className="w-full bg-white py-20 px-6 border-t border-gray-200">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="text-black text-2xl md:text-3xl font-black uppercase tracking-tighter mb-10 text-center md:text-left">
+              Complete The Look
+            </h2>
+            <div className="flex overflow-x-auto gap-8 pb-8 no-scrollbar snap-x snap-mandatory">
+              {related.map((relProduct) => (
+                <Link
+                  to={`/products/${relProduct._id}`}
+                  key={relProduct._id}
+                  className="min-w-70 md:min-w-[320px] snap-center block"
+                >
+                  <Imagecard
+                    image={relProduct.images[0]}
+                    name={relProduct.name}
+                    price={`Rs. ${relProduct.price}`}
+                  />
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

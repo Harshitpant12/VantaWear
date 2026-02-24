@@ -45,7 +45,7 @@ export const getAllProducts = async (req, res) => {
 
 export const getProduct = async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id).populate("reviews.user", "name").where({ deletedAt: null }) // populate the user field in reviews with the name of the user
+        const product = await Product.findOne({ _id: req.params.id, deletedAt: null }).populate("reviews.user", "name");
         if (!product) return res.status(404).json({ message: "No Such Product Found!" })
 
         res.status(200).json(product)
@@ -91,6 +91,8 @@ export const createProduct = async (req, res) => {
             isFeatured, // relying on schema default value
             images
         })
+        console.log(product);
+        
         res.status(201).json(product)
     } catch (error) {
         console.log("Error in createProduct controller : ", error.message)
@@ -130,7 +132,7 @@ export const deleteProduct = async (req, res) => {
         const product = await Product.findById(productId)
         // const product = await Product.findByIdAndUpdate(productId, { deletedAt: Date.now() }, { new: true })
         if (!product) return res.status(404).json({ message: "Product not found!" })
-        if(product.deletedAt) return res.status(400).json({message: "Product already deleted!"})
+        if (product.deletedAt) return res.status(400).json({ message: "Product already deleted!" })
 
         product.deletedAt = Date.now()
         await product.save()

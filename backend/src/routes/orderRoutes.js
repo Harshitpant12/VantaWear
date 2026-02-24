@@ -1,6 +1,6 @@
 import express from "express";
 
-import { createOrder, getMyOrders, getOrderById } from "../controllers/orderControllers.js";
+import { createOrder, getAllOrders, getMyOrders, getOrderById, updateOrderStatus } from "../controllers/orderControllers.js";
 import { protectRoute } from "../middlewares/authMiddleware.js";
 import { checkUserRole } from "../middlewares/checkRoleMiddleware.js";
 
