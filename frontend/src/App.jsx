@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 
 import AdminRoute from "./components/AdminRoute";
 import AdminLayout from "./components/AdminLayout";
+import Dashboard from "./pages/admin/Dashboard";
 
 import Home from "./pages/public/Home";
 import Shop from "./pages/public/Shop";
@@ -33,7 +34,10 @@ function App() {
           {/* Admin */}
           <Route element={<AdminRoute />}>
             <Route element={<AdminLayout />}>
-              {/* will add admin routes here */}
+              <Route path="/admin/dashboard" element={<Dashboard />} />
+              {/* will build these next! */}
+              {/* <Route path="/admin/products" element={<AdminProducts />} /> */}
+              {/* <Route path="/admin/product/new" element={<AddProduct />} /> */}
             </Route>
           </Route>
         </Routes>
