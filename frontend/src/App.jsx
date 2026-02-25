@@ -1,6 +1,9 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
+import AdminRoute from "./components/AdminRoute";
+import AdminLayout from "./components/AdminLayout";
+
 import Home from "./pages/public/Home";
 import Shop from "./pages/public/Shop";
 import Productdetails from "./pages/public/Productdetails";
@@ -27,6 +30,12 @@ function App() {
           {/* Authenitcated */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          {/* Admin */}
+          <Route element={<AdminRoute />}>
+            <Route element={<AdminLayout />}>
+              {/* will add admin routes here */}
+            </Route>
+          </Route>
         </Routes>
       </CartProvider>
     </>
