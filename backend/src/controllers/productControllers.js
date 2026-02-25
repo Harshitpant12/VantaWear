@@ -10,7 +10,8 @@ export const getAllProducts = async (req, res) => {
 
         // filter by category
         if (req.query.category) {
-            query.category = req.query.category
+            const categoriesArr = req.query.category.split(',') // even if a single categories product exist it wil show them too...
+            query.category = { $in: categoriesArr }
         }
 
         // filter by price range
