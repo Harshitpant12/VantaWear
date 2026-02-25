@@ -9,6 +9,8 @@ import Search from "./pages/public/Search";
 import Cart from "./pages/public/Cart";
 import { CartProvider } from "./context/CartContext";
 import Navbar from "./components/Navbar";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
 
 function App() {
   return (
@@ -22,6 +24,9 @@ function App() {
           <Route path="/category/:slug" element={<Category />} />
           <Route path="/search" element={<Search />} />
           <Route path="/cart" element={<Cart />} />
+          {/* Authenitcated */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </CartProvider>
     </>
