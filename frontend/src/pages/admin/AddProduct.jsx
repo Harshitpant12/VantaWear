@@ -1,0 +1,263 @@
+import React, { useState } from "react";
+import { UploadCloud, CheckCircle, AlertCircle, X } from "lucide-react";
+import api from "../../api/axios"; // Your secure backend connection
+
+function AddProduct() {
+
+  const [formData, setFormData] = useState({
+    name: "",
+    price: "",
+    description: "",
+    category: "hoodies", // Default selection
+    stock_quantity: "",
+  });
+  
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imagePreviewUrls, setImagePreviewUrls] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState({ type: "", message: "" }); // 'success' or 'error'
+
+  // Handle standard text/number inputs
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Handle Image Selection & Preview
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    setImageFiles((prev) => [...prev, ...files]);
+
+    // Create local preview URLs so you can see what you are uploading
+    const newPreviews = files.map((file) => URL.createObjectURL(file));
+    setImagePreviewUrls((prev) => [...prev, ...newPreviews]);
+  };
+
+  // Remove an image before uploading
+  const removeImage = (index) => {
+    setImageFiles((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviewUrls((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Submit to backend
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setStatus({ type: "", message: "" });
+
+    try {
+      let uploadedImageUrls = [];
+
+      if (imageFiles.length > 0) {
+        const uploadData = new FormData();
+        imageFiles.forEach((file) => {
+          uploadData.append("images", file); 
+        });
+
+        const uploadRes = await api.post("/upload", uploadData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        uploadedImageUrls = uploadRes.data.imageUrls;
+      }
+
+      const productPayload = {
+        name: formData.name,
+        price: Number(formData.price),
+        description: formData.description,
+        category: formData.category,
+        stock_quantity: Number(formData.stock_quantity),
+        images: uploadedImageUrls, // Will attach the real Cloudinary URLs here
+      };
+
+      await api.post("/products", productPayload);
+
+      // Reset Form on Success
+      setStatus({ type: "success", message: "Drop successfully created." });
+      setFormData({ name: "", price: "", description: "", category: "hoodies", stock_quantity: "" });
+      setImageFiles([]);
+      setImagePreviewUrls([]);
+      
+    } catch (error) {
+      console.error("Error creating product:", error);
+      setStatus({ 
+        type: "error", 
+        message: error.response?.data?.message || "Failed to create drop." 
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto">
+      <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-8">
+        Add New Drop
+      </h1>
+
+      {/* Status Messages */}
+      {status.message && (
+        <div className={`p-4 mb-8 border-2 font-bold uppercase tracking-widest text-sm flex items-center gap-3
+          ${status.type === "success" ? "border-green-500 bg-green-50 text-green-700" : "border-red-500 bg-red-50 text-red-700"}
+        `}>
+          {status.type === "success" ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
+          {status.message}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-10">
+        
+        {/* Basic Info */}
+        <div className="bg-white p-8 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <h2 className="text-xl font-black uppercase tracking-tighter mb-6 border-b border-gray-200 pb-4">
+            Basic Information
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-2 group md:col-span-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-gray-500 group-focus-within:text-black transition-colors">
+                Product Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                required
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full border-b-2 border-gray-300 py-3 text-lg font-bold outline-none focus:border-black transition-colors"
+                placeholder="e.g. Heavyweight Vanta Hoodie"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2 group">
+              <label className="text-xs font-bold uppercase tracking-widest text-gray-500 group-focus-within:text-black transition-colors">
+                Price (Rs.)
+              </label>
+              <input
+                type="number"
+                name="price"
+                required
+                min="0"
+                value={formData.price}
+                onChange={handleChange}
+                className="w-full border-b-2 border-gray-300 py-3 text-lg font-bold outline-none focus:border-black transition-colors"
+                placeholder="5900"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2 group">
+              <label className="text-xs font-bold uppercase tracking-widest text-gray-500 group-focus-within:text-black transition-colors">
+                Category
+              </label>
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                className="w-full border-b-2 border-gray-300 py-3 text-lg font-bold outline-none focus:border-black transition-colors cursor-pointer uppercase tracking-widest bg-transparent"
+              >
+                <option value="hoodies">Hoodies</option>
+                <option value="tees">Tees</option>
+                <option value="bottoms">Bottoms</option>
+                <option value="sets">Sets</option>
+                <option value="outerwear">Outerwear</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-2 group md:col-span-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-gray-500 group-focus-within:text-black transition-colors">
+                Description
+              </label>
+              <textarea
+                name="description"
+                required
+                rows="4"
+                value={formData.description}
+                onChange={handleChange}
+                className="w-full border-b-2 border-gray-300 py-3 text-sm font-semibold outline-none focus:border-black transition-colors resize-none"
+                placeholder="Describe the fit, materials, and feel..."
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        {/* Inventory & Media */}
+        <div className="bg-white p-8 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <h2 className="text-xl font-black uppercase tracking-tighter mb-6 border-b border-gray-200 pb-4">
+            Inventory & Media
+          </h2>
+          
+          <div className="flex flex-col gap-2 group mb-8 w-full md:w-1/2">
+            <label className="text-xs font-bold uppercase tracking-widest text-gray-500 group-focus-within:text-black transition-colors">
+              Stock Quantity
+            </label>
+            <input
+              type="number"
+              name="stock_quantity"
+              required
+              min="0"
+              value={formData.stock_quantity}
+              onChange={handleChange}
+              className="w-full border-b-2 border-gray-300 py-3 text-lg font-bold outline-none focus:border-black transition-colors"
+              placeholder="e.g. 50"
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">
+              Product Images
+            </label>
+            
+            {/* Custom File Upload Box */}
+            <label className="w-full border-2 border-dashed border-gray-300 hover:border-black p-10 flex flex-col items-center justify-center cursor-pointer transition-colors group bg-gray-50">
+              <UploadCloud size={32} className="text-gray-400 group-hover:text-black mb-3 transition-colors" />
+              <span className="text-sm font-bold uppercase tracking-widest text-gray-500 group-hover:text-black transition-colors">
+                Click to browse files
+              </span>
+              <input 
+                type="file" 
+                multiple 
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden" 
+              />
+            </label>
+
+            {/* Image Previews */}
+            {imagePreviewUrls.length > 0 && (
+              <div className="grid grid-cols-3 md:grid-cols-5 gap-4 mt-6">
+                {imagePreviewUrls.map((url, index) => (
+                  <div key={index} className="relative aspect-4/5 border border-gray-200 group">
+                    <img src={url} alt={`Preview ${index}`} className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute top-2 right-2 bg-white text-black p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 shadow-lg"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={isLoading}
+          className={`w-full py-6 font-black uppercase tracking-widest text-lg transition-transform duration-300 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+            ${isLoading ? "bg-gray-200 text-gray-500 border-2 border-gray-300 cursor-not-allowed" : "bg-black text-white hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-0 active:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] border-2 border-black"}
+          `}
+        >
+          {isLoading ? "Publishing Drop..." : "Publish Drop"}
+        </button>
+
+      </form>
+    </div>
+  );
+}
+
+export default AddProduct;
