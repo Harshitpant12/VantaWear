@@ -41,6 +41,15 @@ function AddProduct() {
     setImagePreviewUrls((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => resolve(fileReader.result);
+      fileReader.onerror = (error) => reject(error);
+    });
+  };
+
   // Submit to backend
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,16 +60,11 @@ function AddProduct() {
       let uploadedImageUrls = [];
 
       if (imageFiles.length > 0) {
-        const uploadData = new FormData();
-        imageFiles.forEach((file) => {
-          uploadData.append("images", file); 
-        });
+        // Convert all selected files to base64 strings
+        const base64Images = await Promise.all(imageFiles.map(convertToBase64));
 
-        const uploadRes = await api.post("/upload", uploadData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-
-        uploadedImageUrls = uploadRes.data.imageUrls;
+        const uploadRes = await api.post("/upload", { images: base64Images }); 
+        uploadedImageUrls = uploadRes.data; // backend now returns an array of URLs
       }
 
       const productPayload = {
@@ -69,12 +73,11 @@ function AddProduct() {
         description: formData.description,
         category: formData.category,
         stock_quantity: Number(formData.stock_quantity),
-        images: uploadedImageUrls, // Will attach the real Cloudinary URLs here
+        images: uploadedImageUrls, // The array of Cloudinary URLs
       };
 
       await api.post("/products", productPayload);
 
-      // Reset Form on Success
       setStatus({ type: "success", message: "Drop successfully created." });
       setFormData({ name: "", price: "", description: "", category: "hoodies", stock_quantity: "" });
       setImageFiles([]);
