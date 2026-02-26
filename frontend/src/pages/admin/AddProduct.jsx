@@ -3,15 +3,15 @@ import { UploadCloud, CheckCircle, AlertCircle, X } from "lucide-react";
 import api from "../../api/axios"; // Your secure backend connection
 
 function AddProduct() {
-
   const [formData, setFormData] = useState({
     name: "",
     price: "",
     description: "",
     category: "hoodies", // Default selection
     stock_quantity: "",
+    isFeatured: false,
   });
-  
+
   const [imageFiles, setImageFiles] = useState([]);
   const [imagePreviewUrls, setImagePreviewUrls] = useState([]);
 
@@ -63,7 +63,7 @@ function AddProduct() {
         // Convert all selected files to base64 strings
         const base64Images = await Promise.all(imageFiles.map(convertToBase64));
 
-        const uploadRes = await api.post("/upload", { images: base64Images }); 
+        const uploadRes = await api.post("/upload", { images: base64Images });
         uploadedImageUrls = uploadRes.data; // backend now returns an array of URLs
       }
 
@@ -73,21 +73,27 @@ function AddProduct() {
         description: formData.description,
         category: formData.category,
         stock_quantity: Number(formData.stock_quantity),
+        isFeatured: formData.isFeatured,
         images: uploadedImageUrls, // The array of Cloudinary URLs
       };
 
       await api.post("/products", productPayload);
 
       setStatus({ type: "success", message: "Drop successfully created." });
-      setFormData({ name: "", price: "", description: "", category: "hoodies", stock_quantity: "" });
+      setFormData({
+        name: "",
+        price: "",
+        description: "",
+        category: "hoodies",
+        stock_quantity: "",
+      });
       setImageFiles([]);
       setImagePreviewUrls([]);
-      
     } catch (error) {
       console.error("Error creating product:", error);
-      setStatus({ 
-        type: "error", 
-        message: error.response?.data?.message || "Failed to create drop." 
+      setStatus({
+        type: "error",
+        message: error.response?.data?.message || "Failed to create drop.",
       });
     } finally {
       setIsLoading(false);
@@ -102,22 +108,27 @@ function AddProduct() {
 
       {/* Status Messages */}
       {status.message && (
-        <div className={`p-4 mb-8 border-2 font-bold uppercase tracking-widest text-sm flex items-center gap-3
+        <div
+          className={`p-4 mb-8 border-2 font-bold uppercase tracking-widest text-sm flex items-center gap-3
           ${status.type === "success" ? "border-green-500 bg-green-50 text-green-700" : "border-red-500 bg-red-50 text-red-700"}
-        `}>
-          {status.type === "success" ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
+        `}
+        >
+          {status.type === "success" ? (
+            <CheckCircle size={20} />
+          ) : (
+            <AlertCircle size={20} />
+          )}
           {status.message}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-10">
-        
         {/* Basic Info */}
         <div className="bg-white p-8 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
           <h2 className="text-xl font-black uppercase tracking-tighter mb-6 border-b border-gray-200 pb-4">
             Basic Information
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex flex-col gap-2 group md:col-span-2">
               <label className="text-xs font-bold uppercase tracking-widest text-gray-500 group-focus-within:text-black transition-colors">
@@ -167,6 +178,46 @@ function AddProduct() {
                 <option value="outerwear">Outerwear</option>
               </select>
             </div>
+            {/* Feature Toggle */}
+            <div className="flex flex-col justify-center mt-2 group">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <div className="relative flex items-center">
+                  <input
+                    type="checkbox"
+                    name="isFeatured"
+                    checked={formData.isFeatured}
+                    onChange={(e) =>
+                      setFormData({ ...formData, isFeatured: e.target.checked })
+                    }
+                    className="w-6 h-6 border-2 border-black appearance-none checked:bg-black transition-colors cursor-pointer"
+                  />
+                  {/* Custom Checkmark that only appears when checked */}
+                  {formData.isFeatured && (
+                    <svg
+                      className="absolute w-4 h-4 text-white left-1 pointer-events-none"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={3}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  )}
+                </div>
+                <div>
+                  <span className="text-sm font-black uppercase tracking-widest text-black block">
+                    Feature on Homepage
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                    Will display in the "Featured Drops" section
+                  </span>
+                </div>
+              </label>
+            </div>
 
             <div className="flex flex-col gap-2 group md:col-span-2">
               <label className="text-xs font-bold uppercase tracking-widest text-gray-500 group-focus-within:text-black transition-colors">
@@ -190,7 +241,7 @@ function AddProduct() {
           <h2 className="text-xl font-black uppercase tracking-tighter mb-6 border-b border-gray-200 pb-4">
             Inventory & Media
           </h2>
-          
+
           <div className="flex flex-col gap-2 group mb-8 w-full md:w-1/2">
             <label className="text-xs font-bold uppercase tracking-widest text-gray-500 group-focus-within:text-black transition-colors">
               Stock Quantity
@@ -211,19 +262,22 @@ function AddProduct() {
             <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">
               Product Images
             </label>
-            
+
             {/* Custom File Upload Box */}
             <label className="w-full border-2 border-dashed border-gray-300 hover:border-black p-10 flex flex-col items-center justify-center cursor-pointer transition-colors group bg-gray-50">
-              <UploadCloud size={32} className="text-gray-400 group-hover:text-black mb-3 transition-colors" />
+              <UploadCloud
+                size={32}
+                className="text-gray-400 group-hover:text-black mb-3 transition-colors"
+              />
               <span className="text-sm font-bold uppercase tracking-widest text-gray-500 group-hover:text-black transition-colors">
                 Click to browse files
               </span>
-              <input 
-                type="file" 
-                multiple 
+              <input
+                type="file"
+                multiple
                 accept="image/*"
                 onChange={handleImageChange}
-                className="hidden" 
+                className="hidden"
               />
             </label>
 
@@ -231,8 +285,15 @@ function AddProduct() {
             {imagePreviewUrls.length > 0 && (
               <div className="grid grid-cols-3 md:grid-cols-5 gap-4 mt-6">
                 {imagePreviewUrls.map((url, index) => (
-                  <div key={index} className="relative aspect-4/5 border border-gray-200 group">
-                    <img src={url} alt={`Preview ${index}`} className="w-full h-full object-cover" />
+                  <div
+                    key={index}
+                    className="relative aspect-4/5 border border-gray-200 group"
+                  >
+                    <img
+                      src={url}
+                      alt={`Preview ${index}`}
+                      className="w-full h-full object-cover"
+                    />
                     <button
                       type="button"
                       onClick={() => removeImage(index)}
@@ -257,7 +318,6 @@ function AddProduct() {
         >
           {isLoading ? "Publishing Drop..." : "Publish Drop"}
         </button>
-
       </form>
     </div>
   );

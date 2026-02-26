@@ -16,6 +16,8 @@ import { CartProvider } from "./context/CartContext";
 import Navbar from "./components/Navbar";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import AdminProducts from "./pages/admin/AdminProducts";
+import EditProduct from "./pages/admin/EditProduct";
 
 function App() {
   return (
@@ -37,8 +39,9 @@ function App() {
             <Route element={<AdminLayout />}>
               <Route path="/admin/dashboard" element={<Dashboard />} />
               {/* will build these next! */}
-              {/* <Route path="/admin/products" element={<AdminProducts />} /> */}
+              <Route path="/admin/products" element={<AdminProducts />} />
               <Route path="/admin/product/new" element={<AddProduct />} />
+              <Route path="/admin/product/edit/:id" element={<EditProduct />} />
             </Route>
           </Route>
         </Routes>
