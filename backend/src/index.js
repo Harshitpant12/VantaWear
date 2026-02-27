@@ -29,6 +29,7 @@ app.use('/api/orders', orderRoutes)
 app.use('/api/users', usersRoutes)
 app.use('/api/payment', paymentRoutes)
 app.use('/api/upload', uploadRoutes)
+// app.use('api/settings', idontknowcurrently) // will create it later!
 
 app.listen(PORT, () => {
     console.log(`Server is listening at port ${PORT}`)
