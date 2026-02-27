@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
         postalCode: { type: String },
         country: { type: String }
     }
-})
+}, { timestamps: true })
 
 const User = mongoose.model("User", userSchema)
 
