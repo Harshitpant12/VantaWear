@@ -23,6 +23,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSettings from "./pages/admin/AdminSettings";
 import Checkout from "./pages/user/Checkout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import OrderSuccess from "./pages/user/OrderSuccess";
 
 function App() {
   return (
@@ -42,7 +43,7 @@ function App() {
           {/* Authenticated User */}
           <Route element={<ProtectedRoute />}>
             <Route path="/checkout" element={<Checkout />} />
-            {/* <Route path="/order-success" element={<OrderSuccess />} /> */}
+            <Route path="/order-success" element={<OrderSuccess />} />
           </Route>
           {/* Admin */}
           <Route element={<AdminRoute />}>
