@@ -61,6 +61,11 @@ export const getOrderById = async (req, res) => {
         const order = await Order.findOne({ user_id: userId, _id: orderId })
         if (!order) return res.status(404).json({ message: "No order found!" })
 
+        // Ensure the logged-in user either owns the order or is an admin
+        if (order.user_id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+            return res.status(403).json({ message: "Not authorized to view this order" });
+        }
+
         res.status(200).json({ // trying to keep everything consistent :)
             success: true,
             order

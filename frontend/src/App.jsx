@@ -29,6 +29,7 @@ import Register from "./pages/auth/Register";
 import Checkout from "./pages/user/Checkout";
 import OrderSuccess from "./pages/user/OrderSuccess";
 import OrderHistory from "./pages/user/OrderHistory";
+import OrderDetails from "./pages/user/OrderDetails";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/order-success" element={<OrderSuccess />} />
             <Route path="/account/orders" element={<OrderHistory />} />
+            <Route path="/account/orders/:id" element={<OrderDetails />} />
           </Route>
           {/* Admin */}
           <Route element={<AdminRoute />}>
