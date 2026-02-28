@@ -21,6 +21,8 @@ import EditProduct from "./pages/admin/EditProduct";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSettings from "./pages/admin/AdminSettings";
+import Checkout from "./pages/user/Checkout";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -34,9 +36,14 @@ function App() {
           <Route path="/category/:slug" element={<Category />} />
           <Route path="/search" element={<Search />} />
           <Route path="/cart" element={<Cart />} />
-          {/* Authenitcated */}
+          {/* Authenitcation */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          {/* Authenticated User */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/checkout" element={<Checkout />} />
+            {/* <Route path="/order-success" element={<OrderSuccess />} /> */}
+          </Route>
           {/* Admin */}
           <Route element={<AdminRoute />}>
             <Route element={<AdminLayout />}>

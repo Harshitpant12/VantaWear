@@ -18,7 +18,7 @@ export const createPaymentIntent = async (req, res) => {
             total += product.price * item.quantity;
 
             validCartItems.push({
-                product: product._id,
+                product_id: product._id,
                 name: product.name,
                 price: product.price,
                 quantity: item.quantity,
@@ -78,7 +78,7 @@ export const verifyPayment = async (req, res) => {
             order_items: orderItems,
             shipping_address: shippingAddress,
             total_price: totalPrice,
-            payment_status: "Paid",
+            payment_status: "successful",
             order_status: "Processing",
             payment_intent_id: paymentIntentId
         });

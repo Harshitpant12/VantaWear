@@ -164,9 +164,11 @@ function Cart() {
                 </div>
 
                 {/* Checkout CTA (Call to Action Button) */}
-                <button className="w-full bg-black text-white py-5 font-bold uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-transform duration-300 mb-6 flex justify-center items-center gap-2">
-                  Proceed to Checkout
-                </button>
+                <Link to="/checkout" className="block w-full mb-6">
+                  <button className="w-full bg-black text-white py-5 font-bold uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-transform duration-300 flex justify-center items-center gap-2">
+                    Proceed to Checkout
+                  </button>
+                </Link>
 
                 {/* Trust Badges */}
                 <div className="flex flex-col items-center gap-2 text-xs text-gray-500 uppercase tracking-widest font-semibold text-center">
