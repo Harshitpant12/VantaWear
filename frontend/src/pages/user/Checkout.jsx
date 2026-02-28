@@ -47,13 +47,19 @@ const CheckoutForm = ({ clientSecret }) => {
 
       // If Stripe says it succeeded, hit /verify route to create the Order!
       if (paymentIntent && paymentIntent.status === "succeeded") {
-        await api.post("/payment/verify", {
+        const { data } = await api.post("/payment/verify", {
           paymentIntentId: paymentIntent.id,
         });
 
         // Clear the cart and send a success page
         if (removeFromCart) removeFromCart();
-        navigate("/order-success", { replace: true });
+        navigate("/order-success", {
+          replace: true,
+          state: {
+            fromCheckout: true,
+            orderId: data.order._id,
+          },
+        });
       }
     } catch (err) {
       console.error("Payment verification failed:", err);
