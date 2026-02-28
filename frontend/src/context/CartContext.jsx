@@ -14,10 +14,11 @@ export const CartProvider = ({ children }) => {
       );
 
       if (existingItemIndex > -1) {
-        // If it exists, just increase the quantity
-        const updatedItems = [...prevItems];
-        updatedItems[existingItemIndex].quantity += 1;
-        return updatedItems;
+        return prevItems.map((item, index) => 
+          index === existingItemIndex 
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
       } else {
         // If it's new, add it to the array
         return [...prevItems, { ...product, size, quantity: 1, cartId: `${product.id}-${size}` }];
@@ -54,5 +55,5 @@ export const CartProvider = ({ children }) => {
   );
 };
 
-// Custom hook to make usingit easier in other files
+// Custom hook to make using it easier in other files
 export const useCart = () => useContext(CartContext);

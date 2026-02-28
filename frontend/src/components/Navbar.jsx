@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search as SearchIcon, ShoppingBag, Menu, X } from "lucide-react";
+import { Search as SearchIcon, ShoppingBag, Menu, X, User } from "lucide-react";
 
+import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 
 function Navbar() {
@@ -9,6 +10,7 @@ function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
+  const { user } = useAuth();
   const { cartItems } = useCart();
 
   const totalItems = cartItems.reduce(
@@ -61,13 +63,29 @@ function Navbar() {
           </div>
 
           {/* Right - Icons */}
-          <div className="flex items-center gap-6 z-50">
+          <div className="flex items-center gap-5 z-50">
             <Link
               to="/shop"
               className="hidden md:block text-sm font-bold uppercase tracking-widest hover:text-gray-500 transition-colors"
             >
               Shop
             </Link>
+
+            {/* Profile / Login Icon */}
+            <Link
+              to={user ? "/account/profile" : "/login"}
+              className="text-black hover:text-gray-500 transition-colors hidden md:block"
+            >
+              <User size={22} />
+            </Link>
+
+            {/* Mobile Search Icon (Hidden on Desktop, shows on Mobile) */}
+            <button
+              className="md:hidden text-black hover:scale-110 transition-transform"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <SearchIcon size={22} />
+            </button>
 
             <Link
               to="/cart"
@@ -77,7 +95,7 @@ function Navbar() {
               {/* Real Cart Badge */}
               {totalItems > 0 && (
                 <span className="absolute -top-1.5 -right-2 bg-black text-white text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full">
-                  {}
+                  {totalItems}
                 </span>
               )}
             </Link>
