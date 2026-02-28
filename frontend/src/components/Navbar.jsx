@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search as SearchIcon, ShoppingBag, Menu, X, User } from "lucide-react";
 
 import { useAuth } from "../context/AuthContext";
@@ -27,6 +27,13 @@ function Navbar() {
       setIsMobileMenuOpen(false); // Close the mobile menu automatically so they can see results
     }
   };
+  
+  const location = useLocation();
+  const isAdminRoute = location.pathname.toLowerCase().startsWith("/admin");
+
+  if (isAdminRoute) {
+    return null; // If we are anywhere in the admin panel, render absolutely nothing for the public navbar
+  }
 
   return (
     <>

@@ -112,7 +112,7 @@ function AdminProducts() {
                     
                     {/* Stock Status */}
                     <td className="py-4 px-6">
-                      <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest border ${
+                      <span className={`inline-flex w-max whitespace-nowrap px-3 py-1 text-[10px] font-bold uppercase tracking-widest border ${
                         product.stock_quantity > 10 ? "border-green-500 text-green-600 bg-green-50" : 
                         product.stock_quantity > 0 ? "border-yellow-500 text-yellow-600 bg-yellow-50" : 
                         "border-red-500 text-red-600 bg-red-50"
