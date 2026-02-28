@@ -3,8 +3,18 @@ import { Route, Routes } from "react-router-dom";
 
 import AdminRoute from "./components/AdminRoute";
 import AdminLayout from "./components/AdminLayout";
+import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+import { CartProvider } from "./context/CartContext";
+
 import Dashboard from "./pages/admin/Dashboard";
 import AddProduct from "./pages/admin/AddProduct";
+import AdminProducts from "./pages/admin/AdminProducts";
+import EditProduct from "./pages/admin/EditProduct";
+import AdminOrders from "./pages/admin/AdminOrders";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 import Home from "./pages/public/Home";
 import Shop from "./pages/public/Shop";
@@ -12,18 +22,13 @@ import Productdetails from "./pages/public/Productdetails";
 import Category from "./pages/public/Category";
 import Search from "./pages/public/Search";
 import Cart from "./pages/public/Cart";
-import { CartProvider } from "./context/CartContext";
-import Navbar from "./components/Navbar";
+
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
-import AdminProducts from "./pages/admin/AdminProducts";
-import EditProduct from "./pages/admin/EditProduct";
-import AdminOrders from "./pages/admin/AdminOrders";
-import AdminUsers from "./pages/admin/AdminUsers";
-import AdminSettings from "./pages/admin/AdminSettings";
+
 import Checkout from "./pages/user/Checkout";
-import ProtectedRoute from "./components/ProtectedRoute";
 import OrderSuccess from "./pages/user/OrderSuccess";
+import OrderHistory from "./pages/user/OrderHistory";
 
 function App() {
   return (
@@ -44,12 +49,12 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/order-success" element={<OrderSuccess />} />
+            <Route path="/account/orders" element={<OrderHistory />} />
           </Route>
           {/* Admin */}
           <Route element={<AdminRoute />}>
             <Route element={<AdminLayout />}>
               <Route path="/admin/dashboard" element={<Dashboard />} />
-              {/* will build these next! */}
               <Route path="/admin/products" element={<AdminProducts />} />
               <Route path="/admin/product/new" element={<AddProduct />} />
               <Route path="/admin/product/edit/:id" element={<EditProduct />} />
