@@ -1,17 +1,10 @@
 import { ChevronDown, Filter, X } from "lucide-react";
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+
+import api from "../../api/axios";
 import Sidebar from "../../components/Sidebar";
 import Imagecard from "../../components/Imagecard";
-import api from "../../api/axios";
-
-import Model from "../../assets/model.png";
-import femaleModel from "../../assets/femaleModel.png";
-import tees from "../../assets/TEES.png";
-import monochrome from "../../assets/monochrome.png";
-import sweatshirt from "../../assets/sweatshirt.png";
-import hoodie from "../../assets/hoodie.png";
-import oversized from "../../assets/oversized.png";
-import { Link } from "react-router-dom";
 
 function Shop() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -19,43 +12,78 @@ function Shop() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Pagination States
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const LIMIT = 18; // 3 col desktop and 2 col mobile
+
+  // Filter States
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [priceRange, setPriceRange] = useState("");
   const [sort, setSort] = useState("newest");
 
-  useEffect(() => {
-    const fetchFilteredProducts = async () => {
-      setIsLoading(true);
-      try {
-        const params = new URLSearchParams();
+  // Reusable fetch function
+  const fetchProducts = async (currentPage) => {
+    if (currentPage === 1) setIsLoading(true);
+    else setIsFetchingMore(true);
 
-        if (selectedCategories.length > 0) {
-          params.append("category", selectedCategories.join(","));
-        }
+    try {
+      const params = new URLSearchParams();
 
-        if (priceRange === "Under Rs. 5000") params.append("maxPrice", "5000");
-        if (priceRange === "Rs. 5000 - Rs. 10000") {
-          params.append("minPrice", "5000");
-          params.append("maxPrice", "10000");
-        }
-        if (priceRange === "Over Rs. 10000") params.append("minPrice", "10000");
-
-        params.append("sort", sort);
-
-        const { data } = await api.get(`/products?${params.toString()}`);
-
-        // Handle based on your backend structure
-        setProducts(data.products);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      } finally {
-        setIsLoading(false);
+      if (selectedCategories.length > 0) {
+        params.append("category", selectedCategories.join(","));
       }
-    };
 
-    fetchFilteredProducts();
+      if (priceRange === "Under Rs. 5000") params.append("maxPrice", "5000");
+      if (priceRange === "Rs. 5000 - Rs. 10000") {
+        params.append("minPrice", "5000");
+        params.append("maxPrice", "10000");
+      }
+      if (priceRange === "Over Rs. 10000") params.append("minPrice", "10000");
+
+      params.append("sort", sort);
+      
+      // Add pagination params for the backend
+      params.append("page", currentPage);
+      params.append("limit", LIMIT);
+
+      const { data } = await api.get(`/products?${params.toString()}`);
+      const newProducts = data.products || data; // Adapt to your backend response
+
+      // If it's page 1 (filters changed), replace array. If loading more, append!
+      if (currentPage === 1) {
+        setProducts(newProducts);
+      } else {
+        setProducts((prev) => [...prev, ...newProducts]);
+      }
+
+      // If the backend returned fewer items than our limit, we hit the end of the database!
+      setHasMore(newProducts.length === LIMIT);
+
+    } catch (error) {
+      console.error("Failed to fetch products : ", error);
+    } finally {
+      setIsLoading(false);
+      setIsFetchingMore(false);
+    }
+  };
+
+  // Trigger fetch when filters or sort change (Always reset to Page 1)
+  useEffect(() => {
+    setPage(1);
+    fetchProducts(1);
   }, [selectedCategories, selectedSizes, priceRange, sort]);
+
+  // Handle Load More click
+  const handleLoadMore = () => {
+    if (!isFetchingMore && hasMore) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchProducts(nextPage);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white relative">
@@ -159,11 +187,17 @@ function Shop() {
             </div>
           )}
 
-          {/* Load More Button */}
-          {products.length > 0 && !isLoading && (
+          {/* Load More Button (Only shows if hasMore is true) */}
+          {products.length > 0 && hasMore && !isLoading && (
             <div className="mt-16 flex justify-center pb-24 md:pb-0">
-              <button className="px-10 py-4 border-2 border-black text-black font-bold uppercase tracking-widest text-sm hover:bg-black hover:text-white transition-colors duration-300">
-                Load More
+              <button 
+                onClick={handleLoadMore}
+                disabled={isFetchingMore}
+                className={`px-10 py-4 border-2 border-black font-bold uppercase tracking-widest text-sm transition-colors duration-300
+                  ${isFetchingMore ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "text-black hover:bg-black hover:text-white"}
+                `}
+              >
+                {isFetchingMore ? "Loading..." : "Load More"}
               </button>
             </div>
           )}
