@@ -7,6 +7,7 @@ import AdminLayout from "./components/AdminLayout";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Footer from "./components/Footer";
+import ScrollToTop from "./components/ScrollToTop";
 
 import { CartProvider } from "./context/CartContext";
 
@@ -39,6 +40,7 @@ function App() {
     <>
       <div className="flex flex-col min-h-screen">
         <CartProvider>
+        <ScrollToTop />
         <Toaster position="bottom-right" toastOptions={{ style: { borderRadius: '0', background: '#000', color: '#fff', textTransform: 'uppercase', fontWeight: 'bold', fontSize: '12px', letterSpacing: '0.1em' } }} />
         <Navbar />
         <main className="grow">
