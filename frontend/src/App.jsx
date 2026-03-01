@@ -6,6 +6,7 @@ import AdminRoute from "./components/AdminRoute";
 import AdminLayout from "./components/AdminLayout";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Footer from "./components/Footer";
 
 import { CartProvider } from "./context/CartContext";
 
@@ -36,10 +37,12 @@ import Profile from "./pages/user/Profile";
 function App() {
   return (
     <>
-      <CartProvider>
+      <div className="flex flex-col min-h-screen">
+        <CartProvider>
         <Toaster position="bottom-right" toastOptions={{ style: { borderRadius: '0', background: '#000', color: '#fff', textTransform: 'uppercase', fontWeight: 'bold', fontSize: '12px', letterSpacing: '0.1em' } }} />
         <Navbar />
-        <Routes>
+        <main className="grow">
+          <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/products/:id" element={<Productdetails />} />
@@ -70,7 +73,10 @@ function App() {
             </Route>
           </Route>
         </Routes>
+        </main>
+        <Footer/>
       </CartProvider>
+      </div>
     </>
   );
 }
