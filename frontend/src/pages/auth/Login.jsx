@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import toast from "react-hot-toast";
 
 import { useAuth } from "../../context/AuthContext";
 
@@ -11,12 +12,27 @@ function Login() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false)
 
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // If the user was redirected here from checkout, we send them back there after login
   const from = location.state?.from?.pathname || "/";
+
+  useEffect(() => {
+    if (user) {
+      toast.success("Successfully logged in.");
+      
+      // If they are an admin, immediately send them to the dashboard
+      if (user.role === "admin") {
+        navigate("/admin/dashboard", { replace: true });
+      } 
+      // If they came from a specific page (like Checkout), send them back. Otherwise, default to the Shop page instead of Home.
+      else {
+        const destination = (from === "/" || from === "/login") ? "/shop" : from;
+        navigate(destination, { replace: true });
+      }
+    }
+  }, [user, navigate, from]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,10 +41,8 @@ function Login() {
 
     try {
       await login(email, password);
-      navigate(from, { replace: true }); // Send them to the homepage or their previous page
     } catch (err) {
       setError(err.response?.data?.message || "Invalid email or password.");
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -77,12 +91,12 @@ function Login() {
               className="w-full border-b-2 border-gray-300 py-3 text-lg font-bold outline-none focus:border-black transition-colors"
             />
             <button
-                type="button" // Very important so it doesn't submit the form!
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-black transition-colors"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-black transition-colors"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
 
           <button

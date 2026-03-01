@@ -1,5 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
+import { Toaster } from 'react-hot-toast';
 
 import AdminRoute from "./components/AdminRoute";
 import AdminLayout from "./components/AdminLayout";
@@ -36,6 +37,7 @@ function App() {
   return (
     <>
       <CartProvider>
+        <Toaster position="bottom-right" toastOptions={{ style: { borderRadius: '0', background: '#000', color: '#fff', textTransform: 'uppercase', fontWeight: 'bold', fontSize: '12px', letterSpacing: '0.1em' } }} />
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
