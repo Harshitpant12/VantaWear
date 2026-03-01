@@ -99,3 +99,59 @@ export const verifyPayment = async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 };
+
+export const stripeWebhook = async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    let event;
+
+    try {
+        event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    } catch (err) {
+        console.error("Webhook Error:", err.message);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    if (event.type === 'payment_intent.succeeded') {
+        const paymentIntent = event.data.object;
+
+        try {
+            // Prevent duplicate orders
+            const existingOrder = await Order.findOne({ payment_intent_id: paymentIntent.id });
+            if (existingOrder) {
+                console.log("Order already exists for this payment intent.");
+                return res.status(200).send();
+            }
+
+            // Extract metadata we saved during createPaymentIntent
+            const metadata = paymentIntent.metadata;
+            const orderItems = JSON.parse(metadata.order_items);
+            const shippingAddress = JSON.parse(metadata.shipping_address);
+            const userId = metadata.user_id;
+            const totalPrice = Number(metadata.total_price);
+
+            // Create the order safely in the background
+            const newOrder = new Order({
+                user_id: userId,
+                order_items: orderItems,
+                shipping_address: shippingAddress,
+                total_price: totalPrice,
+                payment_status: "successful",
+                order_status: "Processing",
+                payment_intent_id: paymentIntent.id
+            });
+
+            await newOrder.save();
+            console.log(`Webhook: Order successfully created for User ${userId}`);
+
+        } catch (error) {
+            console.error("Error creating order from webhook:", error);
+            // Still return 200 so Stripe doesn't keep retrying
+            return res.status(200).send(); 
+        }
+    }
+
+    // Return a 200 response to acknowledge receipt of the event
+    res.status(200).send();
+};

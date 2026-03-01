@@ -47,17 +47,12 @@ const CheckoutForm = ({ clientSecret }) => {
 
       // If Stripe says it succeeded, hit /verify route to create the Order!
       if (paymentIntent && paymentIntent.status === "succeeded") {
-        const { data } = await api.post("/payment/verify", {
-          paymentIntentId: paymentIntent.id,
-        });
-
         // Clear the cart and send a success page
         if (removeFromCart) removeFromCart();
         navigate("/order-success", {
           replace: true,
           state: {
             fromCheckout: true,
-            orderId: data.order._id,
           },
         });
       }
@@ -121,7 +116,10 @@ function Checkout() {
   const [error, setError] = useState(null);
 
   // Calculate cart total for display
-  const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  const subtotal = cartItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0,
+  );
   const shippingFee = subtotal >= 10000 ? 0 : 500;
   const cartTotal = subtotal + shippingFee;
 
@@ -317,7 +315,9 @@ function Checkout() {
                 <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mt-1">
                   Qty: {item.quantity} | Size: {item.size}
                 </p>
-                <p className="mt-auto font-bold">Rs. {item.price * item.quantity}</p>
+                <p className="mt-auto font-bold">
+                  Rs. {item.price * item.quantity}
+                </p>
               </div>
             </div>
           ))}

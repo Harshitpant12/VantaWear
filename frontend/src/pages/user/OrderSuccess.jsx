@@ -27,7 +27,9 @@ function OrderSuccess() {
       </h1>
 
       <p className="text-xl font-black tracking-widest uppercase mb-4">
-        Order #{orderId?.slice(-6).toUpperCase()}
+        {orderId
+          ? `Order #${orderId.slice(-6).toUpperCase()}`
+          : "Payment Successful"}
       </p>
 
       <p className="text-gray-500 text-sm font-bold uppercase tracking-widest mb-12 max-w-md leading-relaxed">
