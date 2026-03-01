@@ -64,7 +64,7 @@ function Productdetails() {
       name: product.name,
       price: product.price,
       image: product.images[0],
-    });
+    }, selectedSize);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
   };
@@ -86,7 +86,7 @@ function Productdetails() {
       name: product.name,
       price: product.price,
       image: product.images[0],
-    });
+    }, selectedSize);
     navigate("/checkout");
   };
 
