@@ -26,6 +26,9 @@ export const createPaymentIntent = async (req, res) => {
             });
         }
 
+        const shippingFee = total >= 10000 ? 0 : 500;
+        total += shippingFee;
+
         const paymentIntent = await stripe.paymentIntents.create({
             amount: total * 100,
             currency: 'inr',

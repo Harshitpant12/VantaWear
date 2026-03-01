@@ -121,10 +121,9 @@ function Checkout() {
   const [error, setError] = useState(null);
 
   // Calculate cart total for display
-  const cartTotal = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0,
-  );
+  const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  const shippingFee = subtotal >= 10000 ? 0 : 500;
+  const cartTotal = subtotal + shippingFee;
 
   const handleShippingChange = (e) => {
     setShippingAddress({ ...shippingAddress, [e.target.name]: e.target.value });
@@ -140,7 +139,7 @@ function Checkout() {
 
     try {
       const payload = {
-        cartItems: cartItems,
+        cartItems,
         shippingAddress,
       };
 
@@ -316,12 +315,23 @@ function Checkout() {
                   {item.name}
                 </p>
                 <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mt-1">
-                  Qty: {item.quantity}
+                  Qty: {item.quantity} | Size: {item.size}
                 </p>
-                <p className="mt-auto font-bold">Rs. {item.price}</p>
+                <p className="mt-auto font-bold">Rs. {item.price * item.quantity}</p>
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="flex flex-col gap-3 pt-6 border-t border-gray-300 mb-4">
+          <div className="flex justify-between items-center text-sm font-bold uppercase tracking-widest text-gray-500">
+            <span>Subtotal</span>
+            <span>Rs. {subtotal}</span>
+          </div>
+          <div className="flex justify-between items-center text-sm font-bold uppercase tracking-widest text-gray-500">
+            <span>Shipping</span>
+            <span>{shippingFee === 0 ? "Free" : `Rs. ${shippingFee}`}</span>
+          </div>
         </div>
 
         <div className="border-t-2 border-black pt-4 flex justify-between items-center">
