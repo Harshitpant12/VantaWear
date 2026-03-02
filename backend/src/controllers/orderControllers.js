@@ -1,4 +1,6 @@
 import Order from "../models/orderModel.js";
+import Product from "../models/productModel.js"
+import User from "../models/userModel.js"
 
 export const createOrder = async (req, res) => {
     try {
@@ -96,7 +98,7 @@ export const updateOrderStatus = async (req, res) => {
     try {
         const order = await Order.findOne({ _id: orderId }) // we can use findById also, its about choice :)
         if (!order) return res.status(404).json({ message: "No order found!" })
-        if(order.order_status === order_status) return res.status(400).json({message: "Order already has this status"})
+        if (order.order_status === order_status) return res.status(400).json({ message: "Order already has this status" })
 
         const statusOptions = Order.schema.path('order_status').enumValues
         if (!statusOptions.includes(order_status)) return res.status(400).json({ message: "Please choose a valid option!" })
@@ -113,3 +115,35 @@ export const updateOrderStatus = async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" })
     }
 }
+
+export const getDashboardStats = async (_, res) => {
+    try {
+        const totalOrders = await Order.countDocuments();
+        const totalProducts = await Product.countDocuments();
+        const totalUsers = await User.countDocuments();
+
+        // Calculate actual total revenue from successful orders only
+        const successfulOrders = await Order.find({
+            payment_status: { $in: ["successful"] }
+        });
+
+        const totalRevenue = successfulOrders.reduce((sum, order) => sum + order.total_price, 0);
+
+        // Fetch the 5 most recent orders for the dashboard feed
+        const recentOrders = await Order.find()
+            .sort({ createdAt: -1 })
+            .limit(5);
+
+        res.status(200).json({
+            totalOrders,
+            totalProducts,
+            totalUsers,
+            totalRevenue,
+            recentOrders
+        });
+
+    } catch (error) {
+        console.log("Error in getDashboardStats controller : ", error.message);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
