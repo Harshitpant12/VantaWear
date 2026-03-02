@@ -21,6 +21,10 @@ const orderItemSchema = new mongoose.Schema({
     },
     image: {
         type: String
+    },
+    size: {
+        type: String,
+        required: true
     }
 })
 
@@ -51,7 +55,7 @@ const orderSchema = new mongoose.Schema(
         },
         payment_status: {
             type: String,
-            enum: ["pending", "cancelled", "successful"], // can add more later
+            enum: ["pending", "cancelled", "successful", "pending"],
             default: "pending",
             required: true,
         },

@@ -3,11 +3,13 @@ import Order from "../models/orderModel.js";
 import Product from "../models/productModel.js";
 
 export const createPaymentIntent = async (req, res) => {
-    const { cartItems, shippingAddress } = req.body
-    const userId = req.user._id
+    const { cartItems, shippingAddress } = req.body;
+    const userId = req.user._id;
+
     try {
-        if (!cartItems || cartItems.length === 0) return res.status(400).json({ message: "Cart is empty!" })
-        if (!shippingAddress) return res.status(400).json({ message: "Please provide the shipping address" })
+        if (!cartItems || cartItems.length === 0) return res.status(400).json({ message: "Cart is empty!" });
+        if (!shippingAddress) return res.status(400).json({ message: "Please provide the shipping address" });
+        
         let total = 0;
         const validCartItems = [];
 
@@ -22,7 +24,8 @@ export const createPaymentIntent = async (req, res) => {
                 name: product.name,
                 price: product.price,
                 quantity: item.quantity,
-                image: product.images[0]
+                image: product.images[0],
+                size: item.size
             });
         }
 
@@ -34,14 +37,21 @@ export const createPaymentIntent = async (req, res) => {
             currency: 'inr',
             automatic_payment_methods: {
                 enabled: true
-            },
-            metadata: {
-                user_id: userId.toString(),
-                order_items: JSON.stringify(validCartItems),
-                shipping_address: JSON.stringify(shippingAddress),
-                total_price: total.toString()
             }
         });
+
+        // create order in database immediately as pending
+        const newOrder = new Order({
+            user_id: userId,
+            order_items: validCartItems,
+            shipping_address: shippingAddress,
+            total_price: total,
+            payment_status: "pending",
+            order_status: "Processing",
+            payment_intent_id: paymentIntent.id,
+        });
+
+        await newOrder.save();
 
         res.status(200).json({
             clientSecret: paymentIntent.client_secret,
@@ -49,53 +59,6 @@ export const createPaymentIntent = async (req, res) => {
 
     } catch (error) {
         console.log("Error in createPaymentIntent controller : ", error.message);
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-};
-
-export const verifyPayment = async (req, res) => {
-    const { paymentIntentId } = req.body;
-
-    try {
-        // Fetch the actual PaymentIntent directly from Stripe's servers to verify is it real
-        const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-
-        if (paymentIntent.status !== "succeeded") {
-            return res.status(400).json({ message: "Payment was not successful" });
-        }
-
-        // Prevent duplicate orders (if the user refreshes the success page)
-        const existingOrder = await Order.findOne({ payment_intent_id: paymentIntentId });
-        if (existingOrder) {
-            return res.status(200).json({ success: true, order: existingOrder });
-        }
-
-        const metadata = paymentIntent.metadata;
-        const orderItems = JSON.parse(metadata.order_items);
-        const shippingAddress = JSON.parse(metadata.shipping_address);
-        const userId = metadata.user_id;
-        const totalPrice = Number(metadata.total_price);
-
-        const newOrder = new Order({
-            user_id: userId,
-            order_items: orderItems,
-            shipping_address: shippingAddress,
-            total_price: totalPrice,
-            payment_status: "successful",
-            order_status: "Processing",
-            payment_intent_id: paymentIntentId
-        });
-
-        await newOrder.save();
-
-        res.status(201).json({
-            success: true,
-            order: newOrder,
-            message: "Payment verified and order created."
-        });
-
-    } catch (error) {
-        console.log("Error in verifyPayment controller : ", error.message);
         res.status(500).json({ message: "Internal Server Error" });
     }
 };
@@ -113,41 +76,27 @@ export const stripeWebhook = async (req, res) => {
         return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
+    // update order status when payment succeeds
     if (event.type === 'payment_intent.succeeded') {
         const paymentIntent = event.data.object;
 
         try {
-            // Prevent duplicate orders
-            const existingOrder = await Order.findOne({ payment_intent_id: paymentIntent.id });
-            if (existingOrder) {
-                console.log("Order already exists for this payment intent.");
-                return res.status(200).send();
+            // find the pending order by intent id and update to successful
+            const updatedOrder = await Order.findOneAndUpdate(
+                { payment_intent_id: paymentIntent.id },
+                { payment_status: "successful" },
+                { new: true }
+            );
+
+            if (updatedOrder) {
+                console.log(`Webhook: Order ${updatedOrder._id} marked as successful`);
+            } else {
+                console.log(`Webhook: Payment succeeded but no matching order found in database`);
             }
 
-            // Extract metadata we saved during createPaymentIntent
-            const metadata = paymentIntent.metadata;
-            const orderItems = JSON.parse(metadata.order_items);
-            const shippingAddress = JSON.parse(metadata.shipping_address);
-            const userId = metadata.user_id;
-            const totalPrice = Number(metadata.total_price);
-
-            // Create the order safely in the background
-            const newOrder = new Order({
-                user_id: userId,
-                order_items: orderItems,
-                shipping_address: shippingAddress,
-                total_price: totalPrice,
-                payment_status: "successful",
-                order_status: "Processing",
-                payment_intent_id: paymentIntent.id
-            });
-
-            await newOrder.save();
-            console.log(`Webhook: Order successfully created for User ${userId}`);
-
         } catch (error) {
-            console.error("Error creating order from webhook:", error);
-            // Still return 200 so Stripe doesn't keep retrying
+            console.error("Error updating order from webhook:", error.message);
+            // still return 200 so stripe doesn't keep retrying
             return res.status(200).send(); 
         }
     }

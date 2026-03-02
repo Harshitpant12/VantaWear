@@ -57,6 +57,8 @@ function OrderDetails() {
       </div>
     );
   }
+  const subtotal = order.order_items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const shippingFee = subtotal >= 10000 ? 0 : 500;
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-16 md:py-24">
@@ -179,12 +181,11 @@ function OrderDetails() {
             <div className="flex flex-col gap-4 mb-6">
               <div className="flex justify-between items-center text-sm font-bold uppercase tracking-widest text-gray-600">
                 <span>Subtotal</span>
-                <span>Rs. {order.total_price}</span>{" "}
-                {/* will adjust it if adding separate shipping costs in our Database */}
+                <span>Rs. {subtotal}</span>
               </div>
               <div className="flex justify-between items-center text-sm font-bold uppercase tracking-widest text-gray-600">
                 <span>Shipping</span>
-                <span>Included</span>
+                <span>{shippingFee === 0 ? "Free" : `Rs. ${shippingFee}`}</span>
               </div>
             </div>
 
@@ -203,7 +204,7 @@ function OrderDetails() {
               </span>
               <span
                 className={`px-2 py-1 text-[10px] font-bold uppercase tracking-widest border
-                ${order.payment_status === "Success" ? "border-green-500 text-green-700 bg-green-50" : "border-yellow-500 text-yellow-700 bg-yellow-50"}
+                ${order.payment_status === "successful" || order.payment_status === "Success" ? "border-green-500 text-green-700 bg-green-50" : "border-yellow-500 text-yellow-700 bg-yellow-50"}
               `}
               >
                 {order.payment_status}
