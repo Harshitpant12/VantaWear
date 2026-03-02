@@ -25,6 +25,8 @@ import Productdetails from "./pages/public/Productdetails";
 import Category from "./pages/public/Category";
 import Search from "./pages/public/Search";
 import Cart from "./pages/public/Cart";
+import About from "./pages/public/About";
+import Contact from "./pages/public/Contact";
 
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
@@ -34,7 +36,6 @@ import OrderSuccess from "./pages/user/OrderSuccess";
 import OrderHistory from "./pages/user/OrderHistory";
 import OrderDetails from "./pages/user/OrderDetails";
 import Profile from "./pages/user/Profile";
-import About from "./pages/public/About";
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
           <Route path="/search" element={<Search />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
           {/* Authenitcation */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
