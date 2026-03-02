@@ -9,6 +9,7 @@ import sweatshirt from "../../assets/sweatshirt.png";
 import hoodie from "../../assets/hoodie.png";
 import femaleModel from "../../assets/femaleModel.png";
 import tees from "../../assets/TEES.png";
+import monochrome from "../../assets/monochrome.png"
 
 function Category() {
   const { slug } = useParams(); // Grabs the category name from the URL (e.g. 'hoodies')
@@ -29,6 +30,8 @@ function Category() {
   if (slug === "hoodies") bannerImage = hoodie;
   if (slug === "bottoms") bannerImage = femaleModel;
   if (slug === "tees") bannerImage = tees;
+  if (slug === "sets") bannerImage = monochrome;
+  // if (slug === "outerwear") bannerImage = sweatshirt; // for now it is default so we dont need this
 
   useEffect(() => {
     setSelectedCategories([slug]);

@@ -167,7 +167,7 @@ function Navbar() {
               </Link>
             ) : (
               <Link to="/login" onClick={() => setIsSidebarOpen(false)} className="flex items-center justify-between py-3 font-bold uppercase tracking-widest text-sm hover:text-gray-500 transition-colors">
-                Sign In / Register <ChevronRight size={16} />
+                Log In / Register <ChevronRight size={16} />
               </Link>
             )}
 
@@ -201,6 +201,8 @@ function Navbar() {
               <Link to="/category/hoodies" onClick={() => setIsSidebarOpen(false)} className="py-2 font-bold uppercase tracking-widest text-xs text-gray-500 hover:text-black transition-colors">Hoodies</Link>
               <Link to="/category/tees" onClick={() => setIsSidebarOpen(false)} className="py-2 font-bold uppercase tracking-widest text-xs text-gray-500 hover:text-black transition-colors">Tees</Link>
               <Link to="/category/bottoms" onClick={() => setIsSidebarOpen(false)} className="py-2 font-bold uppercase tracking-widest text-xs text-gray-500 hover:text-black transition-colors">Bottoms</Link>
+              <Link to="/category/sets" onClick={() => setIsSidebarOpen(false)} className="py-2 font-bold uppercase tracking-widest text-xs text-gray-500 hover:text-black transition-colors">Sets</Link>
+              <Link to="/category/outerwear" onClick={() => setIsSidebarOpen(false)} className="py-2 font-bold uppercase tracking-widest text-xs text-gray-500 hover:text-black transition-colors">Outerwear</Link>
             </div>
           </div>
 

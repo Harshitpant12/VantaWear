@@ -94,8 +94,10 @@ function Footer() {
                     Order Tracking
                   </Link>
                 </li>
-                <li className="hover:text-gray-400 cursor-pointer transition-colors">
-                  Contact Us
+                <li>
+                  <Link to="/contact" className="hover:text-gray-400 transition-colors">
+                    Contact Us
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -107,7 +109,7 @@ function Footer() {
           <span className="text-2xl font-black tracking-tighter">VANTAWEAR</span>
           <p className="text-[10px] text-gray-600 tracking-widest uppercase text-center md:text-right">
             &copy; {new Date().getFullYear()} VantaWear. All rights reserved.<br />
-            HARSHIT PANT
+            <a href="https://github.com/Harshitpant12" target="_blank">HARSHIT PANT</a>
           </p>
         </div>
       </div>
