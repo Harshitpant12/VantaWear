@@ -34,6 +34,7 @@ import OrderSuccess from "./pages/user/OrderSuccess";
 import OrderHistory from "./pages/user/OrderHistory";
 import OrderDetails from "./pages/user/OrderDetails";
 import Profile from "./pages/user/Profile";
+import About from "./pages/public/About";
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
           <Route path="/category/:slug" element={<Category />} />
           <Route path="/search" element={<Search />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/about" element={<About />} />
           {/* Authenitcation */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
