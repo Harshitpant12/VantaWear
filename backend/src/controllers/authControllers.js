@@ -64,7 +64,7 @@ export const logout = (_, res) => {
     try {
         res.cookie("jwt", "", {
             maxAge: 0,
-            sameSite: "strict",
+            sameSite: "none",
             secure: process.env.NODE_ENV === 'production',
             httpOnly: true,
             path: "/"
