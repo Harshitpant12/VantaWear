@@ -18,7 +18,7 @@ const app = express()
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
     credentials: true
 }))
 
@@ -35,7 +35,14 @@ app.use('/api/payment', paymentRoutes)
 app.use('/api/upload', uploadRoutes)
 // app.use('api/settings', idontknowcurrently) // will create it later!
 
-app.listen(PORT, () => {
-    console.log(`Server is listening at port ${PORT}`)
-    connectDB()
-})
+connectDB();
+
+// Only listen locally. Vercel handles the routing in production.
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Server is listening at port ${PORT}`);
+    });
+}
+
+// Export the app for Vercel Serverless Functions
+export default app;
