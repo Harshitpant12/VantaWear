@@ -10,8 +10,7 @@
 
 ## Live Demo
 
-[**View Live Application**](https://vantawear.vercel.app/)  
-*(Note: Deployed on Vercel Serverless Functions for instant cold-starts and global edge routing.)*
+[**View Live Application**](https://vantawear.vercel.app/)
 
 ---
 
