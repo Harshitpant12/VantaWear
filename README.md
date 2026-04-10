@@ -46,7 +46,7 @@
 
 ## Screenshots
 
-![]('assets/admin_dashboard.png')
+![Admin Dashboard]('./assets/admin_dashboard.png')
 
 ---
 
