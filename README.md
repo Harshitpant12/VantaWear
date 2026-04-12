@@ -46,7 +46,7 @@
 
 ## Screenshots
 
-_Screenshots will be added soon..._
+![Admin Dashboard]('./assets/admin_dashboard.png')
 
 ---
 
