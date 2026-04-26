@@ -46,7 +46,10 @@
 
 ## Screenshots
 
-![Admin Dashboard]('./assets/admin_dashboard.png')
+![Buy](assets/buy_product.png)
+![Admin Dashboard](assets\admin_dashboard.png)
+![Payment](assets/payment.png)
+![Cart](assets/cart.png)
 
 ---
 
